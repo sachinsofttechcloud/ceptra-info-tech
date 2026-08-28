@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
+/* Class-based dark mode so a toggle button (not just OS setting) can switch themes */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #12121a;
+}
+
+.dark {
+  --background: #0a0a12;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +20,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

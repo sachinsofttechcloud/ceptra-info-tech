@@ -386,7 +386,7 @@ export default function Navbar() {
           >
            
               <Image
-                src="/ceptra-infotech-icon.png"
+                src="/navbar/ceptra-infotech-icon.png"
                 alt="Ceptra Infotech"
                 width={32}
                 height={32}

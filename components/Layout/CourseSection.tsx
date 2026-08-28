@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
 }
 
 const ACCENT = "#5B4FE0";
-const AUTO_ROTATE_MS = 2000;
+const AUTO_ROTATE_MS = 1000;
 
 interface Course {
   slug: string;
@@ -196,8 +196,9 @@ export default function PopularCourses({ groupType = "new-courses" }: { groupTyp
             delay: i * 0.08,
             scrollTrigger: {
               trigger: el,
-              start: "top 92%",
+              start: "top 98%",
               toggleActions: "play reverse play reverse",
+              invalidateOnRefresh: true,
             },
           },
         );

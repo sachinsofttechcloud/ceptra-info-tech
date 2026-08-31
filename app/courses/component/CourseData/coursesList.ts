@@ -38,7 +38,7 @@ export const DEFAULT_COURSE_CONTENT: CourseContentItem[] = [
   {
     id: "video-1",
     type: "video",
-    name: "SalesForce Video - Architecture & Overview",
+    name: "SalesForce Video Architecture & Overview",
     duration: "12:30",
     url: "https://www.youtube.com/watch?v=EfK0SURQ8X0",
     description:
@@ -47,16 +47,16 @@ export const DEFAULT_COURSE_CONTENT: CourseContentItem[] = [
   {
     id: "video-2",
     type: "video",
-    name: "SalesForce Video - Live Hands-on Training",
+    name: "SalesForce Video Live Hands on Training",
     duration: "18:45",
     url: "https://www.youtube.com/watch?v=bDfOdFg5G1U&t=6s",
     description:
-      "Live class session, hands-on tool navigation, data setup, and step-by-step practical implementation techniques.",
+      "Live class session, hands on tool navigation, data setup, and step-by-step practical implementation techniques.",
   },
   {
     id: "pdf-1",
     type: "pdf",
-    name: "SalesForce PDF - Complete Course Syllabus & Roadmap",
+    name: "SalesForce PDF Complete Course Syllabus & Roadmap",
     fileSize: "2.4 MB",
     url: "/courses/docs/salesforce-course-syllabus.pdf",
     description:
@@ -65,7 +65,7 @@ export const DEFAULT_COURSE_CONTENT: CourseContentItem[] = [
   {
     id: "pdf-2",
     type: "pdf",
-    name: "SalesForce PDF - Hands-On Guide & Study Notes",
+    name: "SalesForce PDF Hands On Guide & Study Notes",
     fileSize: "1.8 MB",
     url: "/courses/docs/salesforce-study-notes.pdf",
     description:
@@ -75,7 +75,7 @@ export const DEFAULT_COURSE_CONTENT: CourseContentItem[] = [
 
 const marketingCloudEngagementFullDesc: CourseDescription = {
   about:
-    "Master the complete Salesforce Marketing Cloud ecosystem — Engagement, Data Cloud, Agentforce and Marketing Cloud Next — from beginner to advanced level with a practical, real-world and job-oriented training program.",
+    "Master the complete Salesforce Marketing Cloud ecosystem Engagement, Data Cloud, Agentforce and Marketing Cloud Next from beginner to advanced level with a practical, real world and job oriented training program.",
   sections: [
     {
       heading: "1. Marketing Cloud Engagement",
@@ -145,7 +145,7 @@ const marketingCloudEngagementFullDesc: CourseDescription = {
 
 const marketingCloudEngagementOnlyDesc: CourseDescription = {
   about:
-    "Master Salesforce Marketing Cloud Engagement (SFMC) from beginner to advanced level with a practical, real-world and job-oriented training program. Learn to design and execute complete customer engagement campaigns, build automated journeys, work with customer data, and implement real-world marketing use cases.",
+    "Master Salesforce Marketing Cloud Engagement (SFMC) from beginner to advanced level with a practical, real world and job oriented training program. Learn to design and execute complete customer engagement campaigns, build automated journeys, work with customer data, and implement real world marketing use cases.",
   sections: [
     {
       heading: "What You Will Learn",
@@ -173,7 +173,7 @@ const marketingCloudEngagementOnlyDesc: CourseDescription = {
 
 const dataCloudAgentforceNextDesc: CourseDescription = {
   about:
-    "Go deep into Data Cloud, Agentforce and Marketing Cloud Next — build unified customer profiles, deploy AI-powered agents, and run next-generation marketing campaigns with hands-on, job-oriented training.",
+    "Go deep into Data Cloud, Agentforce and Marketing Cloud Next build unified customer profiles, deploy AI powered agents, and run next generation marketing campaigns with hands on, job oriented training.",
   sections: [
     {
       heading: "1. Data Cloud / Data 360",
@@ -227,7 +227,7 @@ const dataCloudAgentforceNextDesc: CourseDescription = {
 
 const sfmcNextLiveDesc: CourseDescription = {
   about:
-    "A focused, live, hands-on program on Marketing Cloud Next — covering setup, Data Cloud integration, Agentforce for marketing, and a real-time campaign project.",
+    "A focused, live, hands on program on Marketing Cloud Next covering setup, Data Cloud integration, Agentforce for marketing, and a real time campaign project.",
   sections: [
     {
       heading: "What You Will Learn",
@@ -298,7 +298,7 @@ const salesforceAdminDevDesc: CourseDescription = {
 
 const lwcDesc: CourseDescription = {
   about:
-    "Learn to build fast, reusable Salesforce UI components with Lightning Web Components — from component structure and data binding to Apex integration and deployment.",
+    "Learn to build fast, reusable Salesforce UI components with Lightning Web Components from component structure and data binding to Apex integration and deployment.",
   sections: [
     {
       heading: "What You Will Learn",

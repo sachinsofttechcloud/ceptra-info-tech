@@ -70,17 +70,17 @@ export default function ContactHero() {
       directional(descriptionRef.current, 20);
 
       // Floating icons animation
-      gsap.to(".contact-icon", {
-        y: -8,
-        duration: 3 + Math.random() * 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: {
-          amount: 0.4,
-          from: "random",
-        },
-      });
+      // gsap.to(".contact-icon", {
+      //   y: -8,
+      //   duration: 3 + Math.random() * 2,
+      //   repeat: -1,
+      //   yoyo: true,
+      //   ease: "sine.inOut",
+      //   stagger: {
+      //     amount: 0.4,
+      //     from: "random",
+      //   },
+      // });
 
       const refresh = () => ScrollTrigger.refresh();
 

@@ -53,7 +53,7 @@ const COURSES: Course[] = [
     category: "Marketing Cloud",
     title: "Marketing Cloud Engagement",
     description:
-      "Journey Builder, Email Studio and automation studio hands-on, with real campaign builds and audience segmentation.",
+      "Journey Builder, Email Studio and automation studio hands on, with real campaign builds and audience segmentation.",
     duration: "3 Months",
     batchSize: "20 students",
     seats: "Filling Fast",
@@ -64,7 +64,7 @@ const COURSES: Course[] = [
     category: "Marketing Cloud",
     title: "Marketing Cloud Next",
     description:
-      "The next-gen Marketing Cloud experience — unified data model, AI-assisted journeys and the latest platform tooling.",
+      "The next gen Marketing Cloud experience unified data model, AI assisted journeys and the latest platform tooling.",
     duration: "3 Months",
     batchSize: "18 students",
     seats: "Open",
@@ -75,7 +75,7 @@ const COURSES: Course[] = [
     category: "Marketing Cloud",
     title: "Digital Marketing",
     description:
-      "SEO, paid ads, social and analytics — a practical, campaign-driven path to running marketing end to end.",
+      "SEO, paid ads, social and analytics a practical, campaign-driven path to running marketing end to end.",
     duration: "3 Months",
     batchSize: "20 students",
     seats: "Open",
@@ -108,7 +108,7 @@ const COURSES: Course[] = [
     category: "Development",
     title: "Salesforce + LWC",
     description:
-      "Lightning Web Components from scratch — component architecture, Apex integration and deployable custom UI.",
+      "Lightning Web Components from scratch component architecture, Apex integration and deployable custom UI.",
     duration: "4 Months",
     batchSize: "18 students",
     seats: "Open",
@@ -119,7 +119,7 @@ const COURSES: Course[] = [
     category: "Development",
     title: "Web Development",
     description:
-      "Modern front-end and back-end fundamentals — HTML, CSS, JavaScript and framework-driven project builds.",
+      "Modern frontend and backend fundamentals HTML, CSS, JavaScript and framework driven project builds.",
     duration: "4 Months",
     batchSize: "20 students",
     seats: "Open",
@@ -141,7 +141,7 @@ const COURSES: Course[] = [
     category: "CRM Platform",
     title: "CRM Cloud",
     description:
-      "Lead-to-opportunity workflows, forecasting and automation for sales teams running on Salesforce.",
+      "Lead to opportunity workflows, forecasting and automation for sales teams running on Salesforce.",
     duration: "2 Months",
     batchSize: "20 students",
     seats: "Open",
@@ -152,7 +152,7 @@ const COURSES: Course[] = [
     category: "Sales or Service Cloud",
     title: "Sales Cloud",
     description:
-      "Lead-to-opportunity workflows, forecasting and automation for sales teams running on Salesforce.",
+      "Lead to opportunity workflows, forecasting and automation for sales teams running on Salesforce.",
     duration: "2 Months",
     batchSize: "20 students",
     seats: "Open",
@@ -386,7 +386,7 @@ export default function InstitutePrograms() {
             className="mt-4 text-[15.5px] leading-7"
             style={{ color: INK_SOFT }}
           >
-            Browse by track — every batch is live and mentor-led, capped small
+            Browse by track every batch is live and mentor led, capped small
             so faculty can track each learner by name.
           </p>
         </div>

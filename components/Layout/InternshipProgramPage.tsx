@@ -53,7 +53,7 @@ const SECTIONS: Section[] = [
     kicker: "Paid Internship Program",
     heading: "Kickstart Your Career with Real-Time Industry Experience",
     paragraphs: [
-      "At **Ceptra Infotech Pvt. Ltd.**, we believe that practical experience is the key to building a successful career. Our **Paid Internship Program** is designed to bridge the gap between academic learning and industry expectations by providing hands-on training, live projects, and mentorship from experienced professionals.",
+      "At **Ceptra Infotech Pvt. Ltd.**, we believe that practical experience is the key to building a successful career. Our **Paid Internship Program** is designed to bridge the gap between academic learning and industry expectations by providing hands on training, live projects, and mentorship from experienced professionals.",
       "Whether you're a student, recent graduate, or working professional looking to upskill, our internship program helps you gain real-world experience, enhance your technical skills, and improve your employability.",
     ],
     lists: [
@@ -62,7 +62,7 @@ const SECTIONS: Section[] = [
         items: [
           "Work on Live Industry Projects",
           "Learn from Experienced Mentors",
-          "Hands-on Practical Training",
+          "Hands on Practical Training",
           "Industry-Oriented Curriculum",
           "Daily Task Assignments",
           "Code Reviews & Project Guidance",
@@ -80,7 +80,7 @@ const SECTIONS: Section[] = [
   {
     id: "domain-salesforce",
     variant: "domain",
-    kicker: "Internship Domain — 01",
+    kicker: "Internship Domain 01",
     heading: "Salesforce Internship",
     subheading: "Build Your Career in the World's #1 CRM Platform",
     paragraphs: [
@@ -128,7 +128,7 @@ const SECTIONS: Section[] = [
   {
     id: "domain-digital-marketing",
     variant: "domain",
-    kicker: "Internship Domain — 02",
+    kicker: "Internship Domain 02",
     heading: "Digital Marketing Internship",
     subheading: "Learn Modern Digital Marketing with Practical Experience",
     paragraphs: [
@@ -184,7 +184,7 @@ const SECTIONS: Section[] = [
   {
     id: "domain-web-dev",
     variant: "domain",
-    kicker: "Internship Domain — 03",
+    kicker: "Internship Domain 03",
     heading: "Website Development Internship",
     subheading: "Become a Professional Web Developer",
     paragraphs: [
@@ -346,7 +346,7 @@ const SECTIONS: Section[] = [
     variant: "cta-banner",
     heading: "Start Your Professional Journey Today",
     paragraphs: [
-      "Transform your knowledge into practical skills with **Ceptra Infotech's Paid Internship Program**. Gain hands-on experience, work on live projects, earn an internship certificate, and prepare yourself for exciting career opportunities in **Salesforce, Digital Marketing, and Website Development**.",
+      "Transform your knowledge into practical skills with **Ceptra Infotech's Paid Internship Program**. Gain hands on experience, work on live projects, earn an internship certificate, and prepare yourself for exciting career opportunities in **Salesforce, Digital Marketing, and Website Development**.",
       "**Enroll today and take the first step toward a successful IT career with Ceptra Infotech Pvt. Ltd.**",
     ],
   },

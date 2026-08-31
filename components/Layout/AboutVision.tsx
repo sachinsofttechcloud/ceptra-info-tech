@@ -188,7 +188,7 @@ export const AboutVision = () => {
               className="text-base leading-8 text-slate-700 sm:text-lg"
             >
               We envision transforming Salesforce education by providing
-              world-class training that empowers professionals.
+              world class training that empowers professionals.
             </p>
 
             <p
@@ -198,7 +198,7 @@ export const AboutVision = () => {
               className="mt-6 text-base leading-8 text-slate-700 sm:text-lg"
             >
               Our mission is to bridge the gap between industry demands and
-              student capabilities through practical, hands-on learning
+              student capabilities through practical, hands on learning
               experiences.
             </p>
 

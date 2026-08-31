@@ -49,7 +49,7 @@ type FeatureIcon = "live" | "project" | "certificate";
 
 const FEATURES: { icon: FeatureIcon; label: string }[] = [
   { icon: "live", label: "Live mentor sessions" },
-  { icon: "project", label: "Hands-on projects" },
+  { icon: "project", label: "Hands on projects" },
   { icon: "certificate", label: "Certificate on completion" },
 ];
 
@@ -401,7 +401,7 @@ export default function CTASection() {
 
               <p ref={paraRef} className="mt-4 max-w-md text-[15.5px] leading-7 sm:text-[16.5px]" style={{ color: INK_SOFT }}>
                 Sit in on a free live class, meet your mentor, and reserve your
-                spot before the batch fills — no cost, no commitment.
+                spot before the batch fills no cost, no commitment.
               </p>
 
               <div ref={featuresRef} className="mt-6 flex flex-wrap gap-x-6 gap-y-3">

@@ -403,7 +403,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       // manually expand anything.
       const err = autoReplyError as { status?: number; text?: string };
       console.warn(
-        `Auto-reply failed to send — status: ${err?.status ?? "unknown"}, reason: ${
+        `Auto-reply failed to send status: ${err?.status ?? "unknown"}, reason: ${
           err?.text ?? "no reason given"
         }`
       );

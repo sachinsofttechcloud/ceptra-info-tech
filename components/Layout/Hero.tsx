@@ -7,12 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * Font note: authored around Space Grotesk (display) + JetBrains Mono
- * (badge / meta) + Inter (body copy) — matching every other section on
- * the site. Load via `next/font/google` in your root layout for
- * production; system fallbacks are included so it renders correctly as-is.
- */
 
 const ACCENT = "#5B4FE0";
 const ACCENT_SOFT = "#8A7DFF";
@@ -189,8 +183,8 @@ export default function Hero() {
       // ---- Mouse parallax tilt ----
       let tiltCleanup: (() => void) | undefined;
       if (sectionRef.current && visualCardRef.current) {
-        const rotateX = gsap.quickTo(visualCardRef.current, "rotateX", { duration: 0.6, ease: "power3.out" });
-        const rotateY = gsap.quickTo(visualCardRef.current, "rotateY", { duration: 0.6, ease: "power3.out" });
+        // const rotateX = gsap.quickTo(visualCardRef.current, "rotateX", { duration: 0.6, ease: "power3.out" });
+        // const rotateY = gsap.quickTo(visualCardRef.current, "rotateY", { duration: 0.6, ease: "power3.out" });
         const blob1X = gsap.quickTo(blobRef1.current, "x", { duration: 0.8, ease: "power3.out" });
         const blob1Y = gsap.quickTo(blobRef1.current, "y", { duration: 0.8, ease: "power3.out" });
         const blob2X = gsap.quickTo(blobRef2.current, "x", { duration: 0.9, ease: "power3.out" });
@@ -200,8 +194,8 @@ export default function Hero() {
           const rect = sectionRef.current!.getBoundingClientRect();
           const px = (e.clientX - rect.left) / rect.width - 0.5;
           const py = (e.clientY - rect.top) / rect.height - 0.5;
-          rotateY(px * 10);
-          rotateX(-py * 10);
+          // rotateY(px * 10);
+          // rotateX(-py * 10);
           blob1X(px * 26);
           blob1Y(py * 26);
           blob2X(px * -20);
@@ -296,7 +290,7 @@ export default function Hero() {
           </h1>
 
           <p ref={paraRef} className="mt-6 max-w-md text-[16.5px] leading-7" style={{ color: INK_SOFT }}>
-            Join Ceptra for live, mentor-led Salesforce and tech training — small
+            Join Ceptra for live, mentor led Salesforce and tech training small
             batches, real project work, and mentors who track every student by
             name, not by ticket number.
           </p>

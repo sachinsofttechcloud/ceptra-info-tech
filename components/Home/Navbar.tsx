@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -35,6 +36,17 @@ const COURSE_LINK = { label: "Courses", href: "/courses/" };
 const ACCENT = "#5B4FE0";
 const ACCENT_SOFT = "#8A7DFF";
 
+// Strips trailing slashes (except for "/") so "/courses" and "/courses/"
+// are treated as the same route when comparing against the current path.
+function normalizePath(path: string): string {
+  if (path === "/") return path;
+  return path.replace(/\/+$/, "");
+}
+
+function isPathActive(pathname: string, href: string): boolean {
+  return normalizePath(pathname) === normalizePath(href);
+}
+
 function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg
@@ -58,41 +70,53 @@ function DesktopLink({
   label,
   href,
   innerRef,
+  active,
 }: {
   label: string;
   href: string;
   innerRef?: (el: HTMLAnchorElement | null) => void;
+  active: boolean;
 }) {
   const underlineRef = useRef<HTMLSpanElement>(null);
+
+  // On hover, always grow the underline in. On leave, only shrink it back
+  // out if this link ISN'T the active page — the active page's underline
+  // should stay put regardless of mouse position, since it represents
+  // "you are here," not "you're currently hovering here."
+  const handleEnter = () => {
+    if (!underlineRef.current) return;
+    gsap.to(underlineRef.current, {
+      scaleX: 1,
+      duration: 0.32,
+      ease: "power3.out",
+    });
+  };
+  const handleLeave = () => {
+    if (!underlineRef.current || active) return;
+    gsap.to(underlineRef.current, {
+      scaleX: 0,
+      duration: 0.25,
+      ease: "power2.in",
+    });
+  };
 
   return (
     <Link
       href={href}
       ref={innerRef}
-      onMouseEnter={() =>
-        underlineRef.current &&
-        gsap.to(underlineRef.current, {
-          scaleX: 1,
-          duration: 0.32,
-          ease: "power3.out",
-        })
-      }
-      onMouseLeave={() =>
-        underlineRef.current &&
-        gsap.to(underlineRef.current, {
-          scaleX: 0,
-          duration: 0.25,
-          ease: "power2.in",
-        })
-      }
-      className="relative py-2 text-[14.5px] font-medium text-[#1B1B24] transition-colors duration-200 hover:text-[#5B4FE0]"
+      aria-current={active ? "page" : undefined}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className="relative py-2 text-[14.5px] font-medium transition-colors duration-200 hover:text-[#5B4FE0]"
+      style={{ color: active ? ACCENT : "#1B1B24" }}
     >
       {label}
       <span
         ref={underlineRef}
-        className="absolute -bottom-0.5 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full"
+        className="absolute -bottom-0.5 left-0 h-[2px] w-full origin-left rounded-full"
         style={{
           background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT_SOFT})`,
+          transform: active ? "scaleX(1)" : "scaleX(0)",
         }}
       />
     </Link>
@@ -103,16 +127,19 @@ function DropdownNav({
   label,
   items,
   wide = false,
+  active = false,
 }: {
   label: string;
   items: { label: string; href: string }[];
   wide?: boolean;
+  active?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const underlineRef = useRef<HTMLSpanElement>(null);
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pathname = usePathname();
 
   const openNow = () => {
     if (closeTimeout.current) clearTimeout(closeTimeout.current);
@@ -127,7 +154,9 @@ function DropdownNav({
   };
   const scheduleClose = () => {
     closeTimeout.current = setTimeout(() => setOpen(false), 140);
-    if (underlineRef.current) {
+    // Same rule as DesktopLink: don't shrink the underline back out if one
+    // of this dropdown's own pages is the currently active route.
+    if (underlineRef.current && !active) {
       gsap.to(underlineRef.current, {
         scaleX: 0,
         duration: 0.25,
@@ -189,15 +218,17 @@ function DropdownNav({
         aria-haspopup="true"
         aria-expanded={open}
         onClick={() => (open ? setOpen(false) : openNow())}
-        className="relative flex items-center gap-1 py-2 text-[14.5px] font-medium text-[#1B1B24] transition-colors duration-200 hover:text-[#5B4FE0]"
+        className="relative flex items-center gap-1 py-2 text-[14.5px] font-medium transition-colors duration-200 hover:text-[#5B4FE0]"
+        style={{ color: active ? ACCENT : "#1B1B24" }}
       >
         {label}
         <ChevronIcon open={open} />
         <span
           ref={underlineRef}
-          className="absolute -bottom-0.5 left-0 h-[2px] w-full origin-left scale-x-0 rounded-full"
+          className="absolute -bottom-0.5 left-0 h-[2px] w-full origin-left rounded-full"
           style={{
             background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT_SOFT})`,
+            transform: active ? "scaleX(1)" : "scaleX(0)",
           }}
         />
       </button>
@@ -212,27 +243,34 @@ function DropdownNav({
         ].join(" ")}
         style={{ marginTop: 16 }}
       >
-        {items.map((item, i) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            ref={(el) => {
-              itemRefs.current[i] = el;
-            }}
-            className="group flex items-center justify-between rounded-lg px-3 py-2.5 text-[13.5px] font-medium text-[#3A3A46] transition-colors hover:bg-[#5B4FE0]/[.07] hover:text-[#5B4FE0]"
-          >
-            {item.label}
-            <span className="translate-x-[-4px] opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100">
-              →
-            </span>
-          </Link>
-        ))}
+        {items.map((item, i) => {
+          const itemActive = isPathActive(pathname, item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              ref={(el) => {
+                itemRefs.current[i] = el;
+              }}
+              aria-current={itemActive ? "page" : undefined}
+              className="group flex items-center justify-between rounded-lg px-3 py-2.5 text-[13.5px] font-medium transition-colors hover:bg-[#5B4FE0]/[.07] hover:text-[#5B4FE0]"
+              style={{ color: itemActive ? ACCENT : "#3A3A46" }}
+            >
+              {item.label}
+              <span className="translate-x-[-4px] opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100">
+                →
+              </span>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
 }
 
 export default function Navbar() {
+  const pathname = usePathname();
+
   const navRef = useRef<HTMLDivElement>(null);
   const introRefs = useRef<Array<HTMLElement | null>>([]);
   const logoDotRef = useRef<HTMLSpanElement>(null);
@@ -246,6 +284,12 @@ export default function Navbar() {
   const [mobilePagesOpen, setMobilePagesOpen] = useState(false);
   const mobileCoursesRef = useRef<HTMLDivElement>(null);
   const mobilePagesRef = useRef<HTMLDivElement>(null);
+
+  const isHomeActive = isPathActive(pathname, HOME_LINK.href);
+  const isCoursesActive = isPathActive(pathname, COURSE_LINK.href);
+  const isAboutActive = isPathActive(pathname, ABOUT_LINK.href);
+  const isContactActive = isPathActive(pathname, CONTACT_LINK.href);
+  const isMoreActive = PAGE_LINKS.some((link) => isPathActive(pathname, link.href));
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -279,13 +323,7 @@ export default function Navbar() {
     };
   }, []);
 
-  // Shrink-on-scroll, done the non-jumpy way: instead of a single boolean
-  // threshold (which flickers back and forth if the scroll position hovers
-  // near the cutoff — that flicker is what reads as "jumping"), this scrubs
-  // height/shadow smoothly and continuously across a 0–90px scroll range
-  // using ScrollTrigger. There's no discrete flip to jitter around, and the
-  // height change itself becomes gradual instead of an instant 14px snap
-  // that shoves the page content below it.
+
   useEffect(() => {
     if (!navRef.current) return;
     const st = ScrollTrigger.create({
@@ -400,6 +438,7 @@ export default function Navbar() {
             <DesktopLink
               label={HOME_LINK.label}
               href={HOME_LINK.href}
+              active={isHomeActive}
               innerRef={(el) => {
                 introRefs.current[1] = el;
               }}
@@ -414,6 +453,7 @@ export default function Navbar() {
             <DesktopLink
               label={COURSE_LINK.label}
               href={COURSE_LINK.href}
+              active={isCoursesActive}
               innerRef={(el) => {
                 introRefs.current[1] = el;
               }}
@@ -421,6 +461,7 @@ export default function Navbar() {
             <DesktopLink
               label={ABOUT_LINK.label}
               href={ABOUT_LINK.href}
+              active={isAboutActive}
               innerRef={(el) => {
                 introRefs.current[3] = el;
               }}
@@ -428,6 +469,7 @@ export default function Navbar() {
             <DesktopLink
               label={CONTACT_LINK.label}
               href={CONTACT_LINK.href}
+              active={isContactActive}
               innerRef={(el) => {
                 introRefs.current[5] = el;
               }}
@@ -437,7 +479,7 @@ export default function Navbar() {
                 introRefs.current[4] = el;
               }}
             >
-              <DropdownNav label="More" items={PAGE_LINKS} />
+              <DropdownNav label="More" items={PAGE_LINKS} active={isMoreActive} />
             </div>
           </div>
 
@@ -508,39 +550,12 @@ export default function Navbar() {
                 mobileItemRefs.current[0] = el;
               }}
               onClick={() => setIsOpen(false)}
-              className="py-3 text-[16px] font-semibold text-[#12121a]"
+              aria-current={isHomeActive ? "page" : undefined}
+              className="py-3 text-[16px] font-semibold"
+              style={{ color: isHomeActive ? ACCENT : "#12121a" }}
             >
               {HOME_LINK.label}
             </Link>
-
-            {/* <div
-              ref={(el) => {
-                mobileItemRefs.current[1] = el;
-              }}
-              className="border-t border-black/[.06]"
-            >
-              <button
-                type="button"
-                onClick={() => setMobileCoursesOpen((v) => !v)}
-                aria-expanded={mobileCoursesOpen}
-                className="flex w-full items-center justify-between py-3 text-[16px] font-semibold text-[#12121a]"
-              >
-                Courses
-                <ChevronIcon open={mobileCoursesOpen} />
-              </button>
-              <div ref={mobileCoursesRef} className="flex flex-col overflow-hidden" style={{ height: 0, opacity: 0 }}>
-                {COURSE_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="py-2 pl-3 text-[14.5px] text-[#3A3A46]"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div> */}
 
             <Link
               href={COURSE_LINK.href}
@@ -548,7 +563,9 @@ export default function Navbar() {
                 mobileItemRefs.current[2] = el;
               }}
               onClick={() => setIsOpen(false)}
-              className="border-t border-black/[.06] py-3 text-[16px] font-semibold text-[#12121a]"
+              aria-current={isCoursesActive ? "page" : undefined}
+              className="border-t border-black/[.06] py-3 text-[16px] font-semibold"
+              style={{ color: isCoursesActive ? ACCENT : "#12121a" }}
             >
               {COURSE_LINK.label}
             </Link>
@@ -559,7 +576,9 @@ export default function Navbar() {
                 mobileItemRefs.current[2] = el;
               }}
               onClick={() => setIsOpen(false)}
-              className="border-t border-black/[.06] py-3 text-[16px] font-semibold text-[#12121a]"
+              aria-current={isAboutActive ? "page" : undefined}
+              className="border-t border-black/[.06] py-3 text-[16px] font-semibold"
+              style={{ color: isAboutActive ? ACCENT : "#12121a" }}
             >
               {ABOUT_LINK.label}
             </Link>
@@ -570,7 +589,9 @@ export default function Navbar() {
                 mobileItemRefs.current[4] = el;
               }}
               onClick={() => setIsOpen(false)}
-              className="border-t border-black/[.06] py-3 text-[16px] font-semibold text-[#12121a]"
+              aria-current={isContactActive ? "page" : undefined}
+              className="border-t border-black/[.06] py-3 text-[16px] font-semibold"
+              style={{ color: isContactActive ? ACCENT : "#12121a" }}
             >
               {CONTACT_LINK.label}
             </Link>
@@ -585,7 +606,8 @@ export default function Navbar() {
                 type="button"
                 onClick={() => setMobilePagesOpen((v) => !v)}
                 aria-expanded={mobilePagesOpen}
-                className="flex w-full items-center justify-between py-3 text-[16px] font-semibold text-[#12121a]"
+                className="flex w-full items-center justify-between py-3 text-[16px] font-semibold"
+                style={{ color: isMoreActive ? ACCENT : "#12121a" }}
               >
                 More
                 <ChevronIcon open={mobilePagesOpen} />
@@ -595,16 +617,21 @@ export default function Navbar() {
                 className="flex flex-col overflow-hidden"
                 style={{ height: 0, opacity: 0 }}
               >
-                {PAGE_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="py-2 pl-2 text-[14.5px] text-[#3A3A46]"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {PAGE_LINKS.map((link) => {
+                  const linkActive = isPathActive(pathname, link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      aria-current={linkActive ? "page" : undefined}
+                      className="py-2 pl-2 text-[14.5px]"
+                      style={{ color: linkActive ? ACCENT : "#3A3A46" }}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>

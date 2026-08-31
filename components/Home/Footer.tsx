@@ -406,7 +406,7 @@ export default function Footer() {
             }}
           >
             <Image
-              src="/ceptra-infotech-icon.png"
+              src="/navbar/ceptra-infotech-icon.png"
               alt="Ceptra Infotech"
               width={36}
               height={36}

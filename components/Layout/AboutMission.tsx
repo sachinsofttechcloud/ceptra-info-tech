@@ -245,7 +245,7 @@ export function AboutMission() {
             </span>
             <div>
               <p className="text-sm font-bold text-slate-900">Career Driven</p>
-              <p className="text-xs text-slate-600">Job-focused learning</p>
+              <p className="text-xs text-slate-600">Job focused learning</p>
             </div>
           </div>
         </div>
@@ -298,7 +298,7 @@ export function AboutMission() {
             </div>
 
             <p className="fade-text text-base leading-8 text-slate-600 sm:text-lg">
-              Students at Ceptra Infotech gain real-world Salesforce experience
+              Students at Ceptra Infotech gain real world Salesforce experience
               and work on practical projects that prepare them for professional
               roles.
             </p>
@@ -306,7 +306,7 @@ export function AboutMission() {
             <p className="fade-text mt-4 text-base leading-8 text-slate-600 sm:text-lg">
               Our learners are trained to work on Admin tasks, Development,
               Lightning Aura Components, Lightning Web Components, and
-              Integration Projects so they become strong, job-ready Salesforce
+              Integration Projects so they become strong, job ready Salesforce
               Developer candidates.
             </p>
 

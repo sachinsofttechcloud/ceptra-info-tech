@@ -44,12 +44,12 @@ type Reason = {
 const REASONS: Reason[] = [
   {
     title: "Live, mentor-led batches",
-    description: "No pre-recorded playlists — every session is taught live by working practitioners who answer questions in real time.",
+    description: "No pre-recorded playlists every session is taught live by working practitioners who answer questions in real time.",
     icon: "mentor",
   },
   {
     title: "Real project portfolios",
-    description: "You leave with deployable work you built, not just a certificate of attendance — the kind of portfolio hiring managers actually look at.",
+    description: "You leave with deployable work you built, not just a certificate of attendance the kind of portfolio hiring managers actually look at.",
     icon: "project",
   },
   {
@@ -59,11 +59,11 @@ const REASONS: Reason[] = [
   },
   {
     title: "Placement support",
-    description: "Resume reviews, mock interviews and direct referrals into our hiring partner network — built into every track, not an add-on.",
+    description: "Resume reviews, mock interviews and direct referrals into our hiring partner network built into every track, not an add-on.",
     icon: "support",
   },
   {
-    title: "Industry-aligned curriculum",
+    title: "Industry aligned curriculum",
     description: "Updated every cohort to track what Salesforce and hiring teams actually use now, not what was current two years ago.",
     icon: "curriculum",
   },

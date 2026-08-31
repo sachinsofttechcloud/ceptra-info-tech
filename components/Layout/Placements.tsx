@@ -47,7 +47,7 @@ interface PlacementsProps {
 
 const STEPS: Step[] = [
   { title: "Resume & Portfolio", description: "We rebuild your resume and portfolio around real project work, not just course completion." },
-  { title: "Mock Interviews", description: "Practice rounds with mentors covering technical, behavioral and role-specific questions." },
+  { title: "Mock Interviews", description: "Practice rounds with mentors covering technical, behavioral and role specific questions." },
   { title: "Employer Referrals", description: "Direct introductions into our hiring partner network based on your track and strengths." },
   { title: "Offer & Negotiation", description: "Guidance through final rounds, offer review and salary negotiation before you sign." },
 ];
@@ -177,7 +177,7 @@ export default function Placements({ id }: PlacementsProps) {
             land next.
           </h2>
           <p className="mt-4 max-w-lg text-[15px] leading-7" style={{ color: INK_SOFT }}>
-            {`Placement support isn't a one-off session — it's built into every track, from
+            {`Placement support isn't a one off session it's built into every track, from
             resume to offer letter.`}
           </p>
         </div>

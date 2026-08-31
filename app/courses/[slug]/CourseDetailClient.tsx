@@ -708,7 +708,7 @@ export default function CourseDetailClient({
 
           {/* ---- OVERVIEW TAB ---- */}
           {activeTab === "overview" && (
-            <div className="mt-5 space-y-5">
+            <div className="mt-5 space-y-5 md:min-w-184.5">
               <div className="rounded-xl border border-slate-200 p-5">
                 <h2 className="text-sm font-bold text-slate-900">
                   About This Course
@@ -788,7 +788,7 @@ export default function CourseDetailClient({
 
           {/* ---- CONTENT TAB ---- */}
           {activeTab === "content" && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 md:min-w-184.5">
               <div className="mt-5 rounded-xl border border-slate-200">
                 {!folderOpen ? (
                   <button

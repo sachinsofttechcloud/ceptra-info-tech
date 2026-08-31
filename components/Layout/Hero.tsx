@@ -351,7 +351,7 @@ export default function Hero() {
           </div>
 
           {/* Infinite track marquee */}
-          <div className="relative mt-8 max-w-lg overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+          <div className="relative mt-6 mb-2 max-w-lg overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
             <div ref={marqueeRef} className="flex w-max items-center gap-3">
               {marqueeItems.map((track, i) => (
                 <span

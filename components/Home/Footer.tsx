@@ -32,19 +32,19 @@ const FONT_MONO =
 const FONT_BODY = "'Inter', var(--font-body, 'Inter'), system-ui, sans-serif";
 
 const COURSE_LINKS = [
-  { label: "Salesforce", href: "/salesforce-training/" },
-  { label: "Marketing Cloud", href: "/marketing-cloud/" },
-  { label: "Salesforce + LWC", href: "/salesforce-lwc/" },
-  { label: "Sales Cloud", href: "/sales-cloud/" },
-  { label: "Data Cloud", href: "/data-cloud/" },
-  { label: "AgentForce", href: "/agentforce/" },
+  { label: "Salesforce", href: "/courses/" },
+  { label: "Marketing Cloud", href: "/courses/" },
+  { label: "Salesforce + LWC", href: "/courses/" },
+  { label: "Sales Cloud", href: "/courses/" },
+  { label: "Data Cloud", href: "/courses/" },
+  { label: "AgentForce", href: "/courses/" },
 ];
 
 const COMPANY_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about-us/" },
-  { label: "Internship", href: "/internship/" },
-  { label: "Projects", href: "/projects/" },
+  { label: "Internship", href: "/more/internship" },
+  { label: "Blogs", href: "/more/blogs" },
   { label: "Contact", href: "/contact-us/" },
 ];
 

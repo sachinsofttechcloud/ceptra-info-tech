@@ -12,6 +12,7 @@ interface Course {
   title: string;
   image: string;
   tags: string[];
+  
   price: number;
   originalPrice?: number;
   badge?: string;

@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
 }
 
 const ACCENT = "#5B4FE0";
-const AUTO_ROTATE_MS = 1000;
+const AUTO_ROTATE_MS = 4000;
 
 interface Course {
   slug: string;
@@ -153,8 +153,7 @@ export default function PopularCourses({ groupType = "new-courses" }: { groupTyp
       !canNavigate ||
       isPaused ||
       isExpanded ||
-      isHiddenByOtherSection ||
-      layout !== "horizontal"
+      isHiddenByOtherSection 
     ) {
       return;
     }
@@ -221,7 +220,7 @@ export default function PopularCourses({ groupType = "new-courses" }: { groupTyp
 
   const showLeftArrow = canNavigate && layout === "vertical" && index !== 0 && !isExpanded;
   const showRightArrow = canNavigate && !isExpanded;
-  const showDots = canNavigate && layout === "horizontal";
+  const showDots = canNavigate;
 
   if (total === 0) return null;
   if (isHiddenByOtherSection) return null;

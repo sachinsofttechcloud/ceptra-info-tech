@@ -309,7 +309,7 @@ export default function WhyChooseUs() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-24" style={{ fontFamily: FONT_BODY, color: INK }}>
+    <section ref={sectionRef} className="relative overflow-hidden py-12 lg:py-20" style={{ fontFamily: FONT_BODY, color: INK }}>
       {/* Gradient wash base */}
       <div
         className="absolute inset-0"

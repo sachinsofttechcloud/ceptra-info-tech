@@ -229,7 +229,7 @@ export default function Hero() {
   const marqueeItems = [...TRACKS, ...TRACKS];
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden -mt-20 bg-white">
+    <section ref={sectionRef} className="relative overflow-hidden -mt-16 lg:-mt-20 pb-20 lg:pb-16 bg-white">
       {/* Dot grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
@@ -484,7 +484,7 @@ export default function Hero() {
             </div>
 
             {/* Floating badge: affiliation/recognition */}
-            <div ref={badgeCard1Ref} className="absolute -left-10 top-8 flex items-center gap-2.5 rounded-2xl border border-black/[.06] bg-white px-3.5 py-2.5 shadow-[0_18px_38px_-12px_rgba(20,20,40,0.28)]">
+            <div ref={badgeCard1Ref} className="absolute lg:-left-10 top-8 flex items-center gap-2.5 rounded-2xl border border-black/[.06] bg-white px-3.5 py-2.5 shadow-[0_18px_38px_-12px_rgba(20,20,40,0.28)]">
               <span className="flex h-8 w-8 items-center justify-center rounded-full text-white" style={{ background: ACCENT }}>
                 <svg viewBox="0 0 16 16" className="h-4 w-4">
                   <path d="M3 8l3.5 3.5L13 4.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
@@ -497,7 +497,7 @@ export default function Hero() {
             </div>
 
             {/* Floating badge: rating */}
-            <div ref={badgeCard2Ref} className="absolute -bottom-8 -right-8 flex items-center gap-2.5 rounded-2xl border border-black/[.06] bg-white px-3.5 py-2.5 shadow-[0_18px_38px_-12px_rgba(20,20,40,0.28)]">
+            <div ref={badgeCard2Ref} className="absolute -bottom-8 -right-4 lg:-right-8 flex items-center gap-2.5 rounded-2xl border border-black/[.06] bg-white px-3.5 py-2.5 shadow-[0_18px_38px_-12px_rgba(20,20,40,0.28)]">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-500">
                 <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor">
                   <path d="M10 1.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6L10 1.5z" />

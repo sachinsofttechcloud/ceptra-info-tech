@@ -313,7 +313,7 @@ export default function CTASection() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden px-6 py-24"
+      className="relative flex w-full items-center justify-center overflow-hidden px-6 py-12 lg:py-20"
       style={{ background: PAPER, fontFamily: FONT_BODY }}
     >
       {/* Full-bleed ambient background so the section reads as a real
@@ -329,14 +329,14 @@ export default function CTASection() {
             WebkitMaskImage: "radial-gradient(ellipse 65% 70% at 50% 50%, black 25%, transparent 100%)",
           }}
         />
-        <div ref={(el) => { blobOuterRefs.current[0] = el; }} className="absolute -left-24 -top-24 h-[460px] w-[460px]">
+        <div ref={(el) => { blobOuterRefs.current[0] = el; }} className="absolute -left-24 -top-24 max-h-[400px] w-[460px]">
           <div
             ref={(el) => { blobInnerRefs.current[0] = el; }}
             className="h-full w-full rounded-full opacity-[0.20] blur-[100px]"
             style={{ background: `radial-gradient(circle, ${ACCENT}, transparent 70%)` }}
           />
         </div>
-        <div ref={(el) => { blobOuterRefs.current[1] = el; }} className="absolute -right-28 bottom-[-90px] h-[400px] w-[400px]">
+        <div ref={(el) => { blobOuterRefs.current[1] = el; }} className="absolute -right-28 bottom-[-90px] max-h-[360px] w-[400px]">
           <div
             ref={(el) => { blobInnerRefs.current[1] = el; }}
             className="h-full w-full rounded-full opacity-[0.16] blur-[90px]"
@@ -348,12 +348,12 @@ export default function CTASection() {
       <div className="relative mx-auto w-full max-w-5xl">
         {/* Printer slot the ticket emerges from */}
         <div ref={cardWrapRef} className="relative">
-          <div
+          {/* <div
             className="relative z-0 mx-auto h-5 w-[94%] rounded-b-[10px]"
             style={{ background: `linear-gradient(180deg, ${INK}, #26263a)` }}
           >
             <div className="absolute inset-x-10 top-[7px] h-[3px] rounded-full bg-black/40" />
-          </div>
+          </div> */}
 
           <div
             ref={ticketRef}

@@ -1,20 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
-
-/**
- * Font note: authored around Space Grotesk (display) + JetBrains Mono
- * (role labels) + Inter (body copy) — matching the rest of the site.
- * Load via `next/font/google` in your root layout for production; system
- * fallbacks are included so it renders correctly as-is.
- *
- * Avatar note: images below use pravatar.cc placeholders (free, no auth) —
- * swap `avatar` in TESTIMONIALS for real student photos before shipping.
- */
 
 const PAPER = "#FAFAF8";
 const INK = "#14141C";
@@ -28,8 +18,11 @@ const FONT_DISPLAY = "'Space Grotesk', var(--font-display, 'Space Grotesk'), sys
 const FONT_MONO = "'JetBrains Mono', var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace";
 const FONT_BODY = "'Inter', var(--font-body, 'Inter'), system-ui, sans-serif";
 
-const AUTOPLAY_MS = 4500;
-const CARDS_PER_PAGE = 3;
+const AUTOPLAY_MS = 3200;
+
+const DESKTOP_VISIBLE = 3;
+const MOBILE_VISIBLE = 1;
+const MOBILE_BREAKPOINT = 640; // matches Tailwind's `sm`
 
 type Testimonial = {
   quoteBefore: string;
@@ -115,13 +108,19 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
-function chunk<T>(arr: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
-}
+function useVisibleCount() {
+  const [visible, setVisible] = useState(DESKTOP_VISIBLE);
 
-const PAGES = chunk(TESTIMONIALS, CARDS_PER_PAGE);
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const update = () => setVisible(mql.matches ? MOBILE_VISIBLE : DESKTOP_VISIBLE);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  return visible;
+}
 
 function QuoteMark() {
   return (
@@ -131,26 +130,101 @@ function QuoteMark() {
   );
 }
 
+function TestimonialCard({ t }: { t: Testimonial }) {
+  return (
+    <div
+      className="flex h-full flex-col rounded-2xl border p-6"
+      style={{ borderColor: LINE, background: "white" }}
+    >
+      <QuoteMark />
+      <p className="mt-4 flex-1 text-[13.5px] leading-6" style={{ color: INK_SOFT }}>
+        {t.quoteBefore}
+        <span style={{ color: ACCENT_DEEP, fontWeight: 600 }}>{t.highlight}</span>
+        {t.quoteAfter}
+      </p>
+
+      <div className="mt-5 flex items-center gap-3 border-t pt-4" style={{ borderColor: LINE }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={t.avatar} alt={t.name} className="h-9 w-9 rounded-full object-cover" />
+        <div>
+          <div className="text-[13.5px] font-semibold">{t.name}</div>
+          <div className="text-[11.5px]" style={{ fontFamily: FONT_MONO, color: INK_SOFT }}>
+            {t.role}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [page, setPage] = useState(0);
-  const pageRef = useRef(0);
+  const total = TESTIMONIALS.length;
+
+  const visible = useVisibleCount();
+
+  // Sliding-window carousel: instead of jumping between fixed, non-overlapping
+  // groups of cards (1-2-3, then 4-5-6, then 7-8-9), the window advances by
+  // ONE card each tick, so consecutive views always share cards:
+  // [1,2,3] -> [2,3,4] -> [3,4,5] -> ... -> [9,1,2] -> [1,2,3].
+  //
+  // To loop seamlessly we duplicate the first `visible` cards after the real
+  // list. That gives the track enough "real-looking" cards to slide into as
+  // the window approaches the end, and once we've slid exactly `total` steps
+  // the visible window is pixel-identical to the very first view — at that
+  // point we snap back to index 0 with no animation, so the loop never
+  // visibly jumps backward.
+  const extended = useMemo(
+    () => [...TESTIMONIALS, ...TESTIMONIALS.slice(0, visible)],
+    [visible]
+  );
+  const extendedTotal = extended.length;
+
+  const [activeDot, setActiveDot] = useState(0);
+  const indexRef = useRef(0); // 0..total (total = the "back to start" clone position)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const goToPage = (i: number) => {
-    const next = ((i % PAGES.length) + PAGES.length) % PAGES.length;
-    pageRef.current = next;
-    setPage(next);
-    gsap.to(trackRef.current, { xPercent: -next * 100, duration: 0.7, ease: "power3.inOut" });
+  // Reset to a clean start whenever the visible-count breakpoint changes.
+  useEffect(() => {
+    indexRef.current = 0;
+    setActiveDot(0);
+    gsap.set(trackRef.current, { xPercent: 0 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
+
+  const animateToIndex = (index: number) => {
+    indexRef.current = index;
+    setActiveDot(((index % total) + total) % total);
+    gsap.to(trackRef.current, {
+      xPercent: -(index * 100) / extendedTotal,
+      duration: 0.6,
+      ease: "power3.inOut",
+      onComplete: () => {
+        if (index === total) {
+          // We've slid through every real starting position and are now
+          // sitting on the trailing clone, which looks identical to index 0.
+          // Snap back instantly — invisible to the eye, but keeps the index
+          // (and future math) bounded.
+          gsap.set(trackRef.current, { xPercent: 0 });
+          indexRef.current = 0;
+        }
+      },
+    });
+  };
+
+  const goToNext = () => animateToIndex(indexRef.current + 1);
+
+  const goToDot = (dotIndex: number) => {
+    const target = ((dotIndex % total) + total) % total;
+    animateToIndex(target);
   };
 
   const startAutoplay = () => {
     stopAutoplay();
-    timerRef.current = setInterval(() => {
-      goToPage(pageRef.current + 1);
-    }, AUTOPLAY_MS);
+    if (total <= visible) return;
+    timerRef.current = setInterval(goToNext, AUTOPLAY_MS);
   };
   const stopAutoplay = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -182,10 +256,20 @@ export default function Testimonials() {
       stopAutoplay();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [visible]);
+
+  // The track must be wider than the visible container so it has room to
+  // slide. Its total width is (extendedTotal / visible) * 100% of the
+  // container — e.g. with 12 cards and 3 visible, the track is 400% wide.
+  // Each card's flex-basis is then a fraction of the TRACK's own width
+  // (100 / extendedTotal), which works out to exactly (100 / visible)% of
+  // the visible container — i.e. each card renders at the correct size
+  // regardless of how many total cards (real + clones) exist.
+  const trackWidthPercent = (extendedTotal / visible) * 100;
+  const cardBasisPercent = 100 / extendedTotal;
 
   return (
-    <section ref={sectionRef} className="relative py-24" style={{ background: PAPER, fontFamily: FONT_BODY, color: INK }}>
+    <section ref={sectionRef} className="relative py-12 lg:py-20" style={{ background: PAPER, fontFamily: FONT_BODY, color: INK }}>
       <div className="mx-auto w-full max-w-6xl px-6">
         {/* Header */}
         <div ref={headingRef} className="flex flex-col items-center text-center">
@@ -210,53 +294,32 @@ export default function Testimonials() {
           onMouseEnter={stopAutoplay}
           onMouseLeave={startAutoplay}
         >
-          <div ref={trackRef} className="flex">
-            {PAGES.map((group, pageIndex) => (
-              <div key={pageIndex} className="grid w-full shrink-0 grid-cols-1 gap-5 sm:grid-cols-3">
-                {group.map((t) => (
-                  <div
-                    key={t.name}
-                    className="flex flex-col rounded-2xl border p-6"
-                    style={{ borderColor: LINE, background: "white" }}
-                  >
-                    <QuoteMark />
-                    <p className="mt-4 flex-1 text-[13.5px] leading-6" style={{ color: INK_SOFT }}>
-                      {t.quoteBefore}
-                      <span style={{ color: ACCENT_DEEP, fontWeight: 600 }}>{t.highlight}</span>
-                      {t.quoteAfter}
-                    </p>
-
-                    <div className="mt-5 flex items-center gap-3 border-t pt-4" style={{ borderColor: LINE }}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={t.avatar} alt={t.name} className="h-9 w-9 rounded-full object-cover" />
-                      <div>
-                        <div className="text-[13.5px] font-semibold">{t.name}</div>
-                        <div className="text-[11.5px]" style={{ fontFamily: FONT_MONO, color: INK_SOFT }}>
-                          {t.role}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+          <div ref={trackRef} className="flex" style={{ width: `${trackWidthPercent}%` }}>
+            {extended.map((t, i) => (
+              <div
+                key={`${t.name}-${i}`}
+                style={{ flex: `0 0 ${cardBasisPercent}%`, boxSizing: "border-box", padding: "0 10px" }}
+              >
+                <TestimonialCard t={t} />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Pagination dots */}
-        <div className="mt-8 flex items-center justify-center gap-2">
-          {PAGES.map((_, i) => (
+        {/* Pagination dots — one per real testimonial */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+          {TESTIMONIALS.map((_, i) => (
             <button
               key={i}
-              aria-label={`Go to testimonial page ${i + 1}`}
+              aria-label={`Go to testimonial ${i + 1}`}
               onClick={() => {
-                goToPage(i);
+                goToDot(i);
                 startAutoplay();
               }}
               className="h-2 rounded-full transition-all duration-300"
               style={{
-                width: page === i ? 20 : 8,
-                background: page === i ? `linear-gradient(90deg, ${ACCENT}, ${ACCENT_SOFT})` : LINE,
+                width: activeDot === i ? 20 : 8,
+                background: activeDot === i ? `linear-gradient(90deg, ${ACCENT}, ${ACCENT_SOFT})` : LINE,
               }}
             />
           ))}

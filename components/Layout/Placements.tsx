@@ -160,7 +160,7 @@ export default function Placements({ id }: PlacementsProps) {
   }, []);
 
   return (
-    <section id={id} ref={sectionRef} className="relative overflow-hidden py-24" style={{ background: PAPER, fontFamily: FONT_BODY, color: INK }}>
+    <section id={id} ref={sectionRef} className="relative overflow-hidden py-12 lg:py-20" style={{ background: PAPER, fontFamily: FONT_BODY, color: INK }}>
       <div className="mx-auto w-full max-w-6xl px-6">
         {/* Header */}
         <div ref={headingRef} className="max-w-2xl">
@@ -177,8 +177,8 @@ export default function Placements({ id }: PlacementsProps) {
             land next.
           </h2>
           <p className="mt-4 max-w-lg text-[15px] leading-7" style={{ color: INK_SOFT }}>
-            Placement support isn't a one-off session — it's built into every track, from
-            resume to offer letter.
+            {`Placement support isn't a one-off session — it's built into every track, from
+            resume to offer letter.`}
           </p>
         </div>
 

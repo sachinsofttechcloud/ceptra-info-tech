@@ -22,8 +22,10 @@ const ACCENT = "#5B4FE0";
 const ACCENT_SOFT = "#8A7DFF";
 const ACCENT_DEEP = "#3E2FBF";
 
-const FONT_DISPLAY = "'Space Grotesk', var(--font-display, 'Space Grotesk'), system-ui, sans-serif";
-const FONT_MONO = "'JetBrains Mono', var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace";
+const FONT_DISPLAY =
+  "'Space Grotesk', var(--font-display, 'Space Grotesk'), system-ui, sans-serif";
+const FONT_MONO =
+  "'JetBrains Mono', var(--font-mono, 'JetBrains Mono'), ui-monospace, monospace";
 const FONT_BODY = "'Inter', var(--font-body, 'Inter'), system-ui, sans-serif";
 
 type Course = {
@@ -33,46 +35,33 @@ type Course = {
   duration: string;
   batchSize: string;
   seats: "Open" | "Filling Fast" | "Few Seats Left";
-  icon: "cloud" | "megaphone" | "bolt" | "component" | "briefcase" | "database" | "bot" | "code" | "target";
+  icon:
+    | "cloud"
+    | "megaphone"
+    | "bolt"
+    | "component"
+    | "briefcase"
+    | "database"
+    | "bot"
+    | "code"
+    | "target";
   href: string;
 };
 
 const COURSES: Course[] = [
   {
-    category: "CRM Platform",
-    title: "Salesforce",
-    description:
-      "Admin, development and configuration fundamentals across the Salesforce ecosystem, built for real project work.",
-    duration: "4 Months",
-    batchSize: "20 students",
-    seats: "Filling Fast",
-    icon: "cloud",
-    href: "/salesforce-training/",
-  },
-  {
-    category: "CRM Platform",
-    title: "Sales Cloud",
-    description:
-      "Lead-to-opportunity workflows, forecasting and automation for sales teams running on Salesforce.",
-    duration: "2 Months",
-    batchSize: "20 students",
-    seats: "Open",
-    icon: "briefcase",
-    href: "/sales-cloud/",
-  },
-  {
-    category: "Marketing Automation",
-    title: "Marketing Cloud",
+    category: "Marketing Cloud",
+    title: "Marketing Cloud Engagement",
     description:
       "Journey Builder, Email Studio and automation studio hands-on, with real campaign builds and audience segmentation.",
     duration: "3 Months",
     batchSize: "20 students",
     seats: "Filling Fast",
     icon: "megaphone",
-    href: "/marketing-cloud/",
+    href: "/courses/marketing-cloud-engagement",
   },
   {
-    category: "Marketing Automation",
+    category: "Marketing Cloud",
     title: "Marketing Cloud Next",
     description:
       "The next-gen Marketing Cloud experience — unified data model, AI-assisted journeys and the latest platform tooling.",
@@ -80,7 +69,40 @@ const COURSES: Course[] = [
     batchSize: "18 students",
     seats: "Open",
     icon: "bolt",
-    href: "/marketing-cloud-next/",
+    href: "/courses/data-cloud-agentforce-marketing-cloud-next",
+  },
+  {
+    category: "Marketing Cloud",
+    title: "Digital Marketing",
+    description:
+      "SEO, paid ads, social and analytics — a practical, campaign-driven path to running marketing end to end.",
+    duration: "3 Months",
+    batchSize: "20 students",
+    seats: "Open",
+    icon: "target",
+    href: "/digital-marketing/",
+  },
+  {
+    category: "Data Cloud",
+    title: "Data Cloud",
+    description:
+      "Unify customer data across sources and build the segments that power every downstream Salesforce workflow.",
+    duration: "2 Months",
+    batchSize: "18 students",
+    seats: "Few Seats Left",
+    icon: "database",
+    href: "/courses/data-cloud-agentforce-marketing-cloud-next",
+  },
+  {
+    category: "AgentForce",
+    title: "AgentForce",
+    description:
+      "Design and deploy autonomous AI agents on the Salesforce platform, from prompt design to production rollout.",
+    duration: "2 Months",
+    batchSize: "15 students",
+    seats: "Filling Fast",
+    icon: "bot",
+    href: "/courses/data-cloud-agentforce-marketing-cloud-next",
   },
   {
     category: "Development",
@@ -91,7 +113,7 @@ const COURSES: Course[] = [
     batchSize: "18 students",
     seats: "Open",
     icon: "component",
-    href: "/salesforce-lwc/",
+    href: "/courses/lwc",
   },
   {
     category: "Development",
@@ -102,40 +124,40 @@ const COURSES: Course[] = [
     batchSize: "20 students",
     seats: "Open",
     icon: "code",
-    href: "/web-developement/",
+    href: "/courses/web-developement/",
   },
   {
-    category: "Data Platform",
-    title: "Data Cloud",
+    category: "CRM Platform",
+    title: "CRM Platform",
     description:
-      "Unify customer data across sources and build the segments that power every downstream Salesforce workflow.",
-    duration: "2 Months",
-    batchSize: "18 students",
-    seats: "Few Seats Left",
-    icon: "database",
-    href: "/data-cloud/",
-  },
-  {
-    category: "AI on Salesforce",
-    title: "AgentForce",
-    description:
-      "Design and deploy autonomous AI agents on the Salesforce platform, from prompt design to production rollout.",
-    duration: "2 Months",
-    batchSize: "15 students",
+      "Admin, development and configuration fundamentals across the Salesforce ecosystem, built for real project work.",
+    duration: "4 Months",
+    batchSize: "20 students",
     seats: "Filling Fast",
-    icon: "bot",
-    href: "/agentforce/",
+    icon: "cloud",
+    href: "/courses/salesforce-training/",
   },
   {
-    category: "Marketing",
-    title: "Digital Marketing",
+    category: "CRM Platform",
+    title: "CRM Cloud",
     description:
-      "SEO, paid ads, social and analytics — a practical, campaign-driven path to running marketing end to end.",
-    duration: "3 Months",
+      "Lead-to-opportunity workflows, forecasting and automation for sales teams running on Salesforce.",
+    duration: "2 Months",
     batchSize: "20 students",
     seats: "Open",
-    icon: "target",
-    href: "/digital-marketing/",
+    icon: "briefcase",
+    href: "/courses/crm-cloud/",
+  },
+  {
+    category: "Sales or Service Cloud",
+    title: "Sales Cloud",
+    description:
+      "Lead-to-opportunity workflows, forecasting and automation for sales teams running on Salesforce.",
+    duration: "2 Months",
+    batchSize: "20 students",
+    seats: "Open",
+    icon: "briefcase",
+    href: "/courses/sales-cloud/",
   },
 ];
 
@@ -148,12 +170,21 @@ const SEAT_STYLES: Record<Course["seats"], string> = {
 };
 
 function CourseIcon({ type }: { type: Course["icon"] }) {
-  const common = { stroke: "white", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, fill: "none" };
+  const common = {
+    stroke: "white",
+    strokeWidth: 1.7,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    fill: "none",
+  };
   switch (type) {
     case "cloud":
       return (
         <svg viewBox="0 0 24 24" className="h-6 w-6">
-          <path d="M7 17h10a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 7.1 10.1 3.5 3.5 0 0 0 7 17z" {...common} />
+          <path
+            d="M7 17h10a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 7.1 10.1 3.5 3.5 0 0 0 7 17z"
+            {...common}
+          />
         </svg>
       );
     case "megaphone":
@@ -182,7 +213,10 @@ function CourseIcon({ type }: { type: Course["icon"] }) {
       return (
         <svg viewBox="0 0 24 24" className="h-6 w-6">
           <rect x="3" y="7.5" width="18" height="12" rx="2" {...common} />
-          <path d="M8 7.5V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5v2M3 13h18" {...common} />
+          <path
+            d="M8 7.5V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5v2M3 13h18"
+            {...common}
+          />
         </svg>
       );
     case "database":
@@ -241,8 +275,18 @@ export default function InstitutePrograms() {
           trigger: sectionRef.current,
           start: "top 82%",
           end: "bottom 15%",
-          onEnter: () => gsap.fromTo(el, { y: distance }, { y: 0, duration: 0.55, delay, ease: "power3.out" }),
-          onEnterBack: () => gsap.fromTo(el, { y: -distance }, { y: 0, duration: 0.55, delay, ease: "power3.out" }),
+          onEnter: () =>
+            gsap.fromTo(
+              el,
+              { y: distance },
+              { y: 0, duration: 0.55, delay, ease: "power3.out" },
+            ),
+          onEnterBack: () =>
+            gsap.fromTo(
+              el,
+              { y: -distance },
+              { y: 0, duration: 0.55, delay, ease: "power3.out" },
+            ),
         });
       };
 
@@ -270,8 +314,18 @@ export default function InstitutePrograms() {
       trigger: el,
       start: "top 90%",
       end: "bottom 10%",
-      onEnter: () => gsap.fromTo(el.children, { y: 24 }, { y: 0, duration: 0.55, stagger: 0.06, ease: "power3.out" }),
-      onEnterBack: () => gsap.fromTo(el.children, { y: -24 }, { y: 0, duration: 0.55, stagger: 0.06, ease: "power3.out" }),
+      onEnter: () =>
+        gsap.fromTo(
+          el.children,
+          { y: 24 },
+          { y: 0, duration: 0.55, stagger: 0.06, ease: "power3.out" },
+        ),
+      onEnterBack: () =>
+        gsap.fromTo(
+          el.children,
+          { y: -24 },
+          { y: 0, duration: 0.55, stagger: 0.06, ease: "power3.out" },
+        ),
     });
     return () => st.kill();
   }, []);
@@ -294,11 +348,19 @@ export default function InstitutePrograms() {
   // Simple slide-in for the course grid whenever the category changes
   useLayoutEffect(() => {
     if (!gridRef.current) return;
-    gsap.fromTo(gridRef.current.children, { y: 10 }, { y: 0, duration: 0.4, stagger: 0.04, ease: "power2.out" });
+    gsap.fromTo(
+      gridRef.current.children,
+      { y: 10 },
+      { y: 0, duration: 0.4, stagger: 0.04, ease: "power2.out" },
+    );
   }, [activeCategory]);
 
   return (
-    <section ref={sectionRef} className="relative py-24" style={{ background: PAPER, fontFamily: FONT_BODY, color: INK }}>
+    <section
+      ref={sectionRef}
+      className="relative py-16 lg:py-20"
+      style={{ background: PAPER, fontFamily: FONT_BODY, color: INK }}
+    >
       <div className="mx-auto w-full max-w-6xl px-6">
         {/* Header */}
         <div ref={headingRef} className="max-w-2xl">
@@ -306,17 +368,26 @@ export default function InstitutePrograms() {
             className="inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.16em]"
             style={{ fontFamily: FONT_MONO, color: ACCENT_DEEP }}
           >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: ACCENT }} />
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ background: ACCENT }}
+            />
             Course Catalog
           </div>
-          <h2 className="mt-4 text-[34px] font-medium leading-[1.1] tracking-tight sm:text-[46px]" style={{ fontFamily: FONT_DISPLAY }}>
+          <h2
+            className="mt-4 text-[34px] font-medium leading-[1.1] tracking-tight sm:text-[46px]"
+            style={{ fontFamily: FONT_DISPLAY }}
+          >
             Learn what runs the
             <br />
             modern enterprise stack.
           </h2>
-          <p className="mt-4 text-[15.5px] leading-7" style={{ color: INK_SOFT }}>
-            Browse by track — every batch is live and mentor-led, capped small so
-            faculty can track each learner by name.
+          <p
+            className="mt-4 text-[15.5px] leading-7"
+            style={{ color: INK_SOFT }}
+          >
+            Browse by track — every batch is live and mentor-led, capped small
+            so faculty can track each learner by name.
           </p>
         </div>
 
@@ -329,7 +400,10 @@ export default function InstitutePrograms() {
           <div
             ref={indicatorRef}
             className="absolute bottom-[-1px] left-0 h-[2px] rounded-full"
-            style={{ background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT_SOFT})`, width: 0 }}
+            style={{
+              background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT_SOFT})`,
+              width: 0,
+            }}
           />
           {CATEGORIES.map((cat) => {
             const count = COURSES.filter((c) => c.category === cat).length;
@@ -351,7 +425,13 @@ export default function InstitutePrograms() {
                 {cat}
                 <span
                   className="rounded-full px-1.5 py-0.5 text-[10.5px]"
-                  style={{ fontFamily: FONT_MONO, background: isActive ? `${ACCENT}22` : "rgba(20,20,28,0.06)", color: isActive ? ACCENT_DEEP : INK_SOFT }}
+                  style={{
+                    fontFamily: FONT_MONO,
+                    background: isActive
+                      ? `${ACCENT}22`
+                      : "rgba(20,20,28,0.06)",
+                    color: isActive ? ACCENT_DEEP : INK_SOFT,
+                  }}
                 >
                   {count}
                 </span>
@@ -361,7 +441,10 @@ export default function InstitutePrograms() {
         </div>
 
         {/* Course grid for the active tab */}
-        <div ref={gridRef} className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          ref={gridRef}
+          className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {visibleCourses.map((course) => (
             <div
               key={course.title}
@@ -371,52 +454,108 @@ export default function InstitutePrograms() {
               <div className="flex items-start justify-between">
                 <span
                   className="flex h-12 w-12 items-center justify-center rounded-2xl"
-                  style={{ background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})` }}
+                  style={{
+                    background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
+                  }}
                 >
                   <CourseIcon type={course.icon} />
                 </span>
-                <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${SEAT_STYLES[course.seats]}`}>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${SEAT_STYLES[course.seats]}`}
+                >
                   {course.seats}
                 </span>
               </div>
 
-              <div className="mt-5 text-[11.5px] font-semibold uppercase tracking-wide" style={{ fontFamily: FONT_MONO, color: ACCENT_DEEP }}>
+              <div
+                className="mt-5 text-[11.5px] font-semibold uppercase tracking-wide"
+                style={{ fontFamily: FONT_MONO, color: ACCENT_DEEP }}
+              >
                 {course.category}
               </div>
-              <h3 className="mt-1.5 text-[19px] font-medium" style={{ fontFamily: FONT_DISPLAY }}>
+              <h3
+                className="mt-1.5 text-[19px] font-medium"
+                style={{ fontFamily: FONT_DISPLAY }}
+              >
                 {course.title}
               </h3>
-              <p className="mt-2.5 flex-1 text-[13.5px] leading-6" style={{ color: INK_SOFT }}>
+              <p
+                className="mt-2.5 flex-1 text-[13.5px] leading-6"
+                style={{ color: INK_SOFT }}
+              >
                 {course.description}
               </p>
 
-              <div className="mt-5 flex items-center justify-between border-t pt-4 text-[12.5px]" style={{ borderColor: LINE, color: INK_SOFT }}>
+              <div
+                className="mt-5 flex items-center justify-between border-t pt-4 text-[12.5px]"
+                style={{ borderColor: LINE, color: INK_SOFT }}
+              >
                 <span className="flex items-center gap-1.5">
                   <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none">
-                    <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M8 5v3l2 1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    <circle
+                      cx="8"
+                      cy="8"
+                      r="6"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
+                    <path
+                      d="M8 5v3l2 1.5"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
                   </svg>
-                  <span style={{ fontFamily: FONT_MONO }}>{course.duration}</span>
+                  <span style={{ fontFamily: FONT_MONO }}>
+                    {course.duration}
+                  </span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none">
-                    <circle cx="5.5" cy="5.5" r="2.2" stroke="currentColor" strokeWidth="1.4" />
-                    <circle cx="11" cy="6.5" r="1.8" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M2 13c.5-2.3 2.3-3.5 4.5-3.5S10.5 10.7 11 13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                    <circle
+                      cx="5.5"
+                      cy="5.5"
+                      r="2.2"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
+                    <circle
+                      cx="11"
+                      cy="6.5"
+                      r="1.8"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
+                    <path
+                      d="M2 13c.5-2.3 2.3-3.5 4.5-3.5S10.5 10.7 11 13"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
                   </svg>
-                  <span style={{ fontFamily: FONT_MONO }}>{course.batchSize}</span>
+                  <span style={{ fontFamily: FONT_MONO }}>
+                    {course.batchSize}
+                  </span>
                 </span>
               </div>
 
               <Link
-                href={course.href}
-                className="mt-5 inline-flex items-center justify-center rounded-full border py-2.5 text-[13.5px] font-semibold transition-colors duration-200 group-hover:border-transparent group-hover:text-white"
-                style={{ borderColor: LINE, color: INK, backgroundImage: "none" }}
+                href={"/courses"}
+                className="mt-5 inline-flex items-center justify-center rounded-full border py-2.5 text-[13.5px] font-semibold transition-colors duration-200"
+                style={{
+                  borderColor: LINE,
+                  color: INK,
+                  backgroundImage: "none",
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundImage = `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`;
+                  e.currentTarget.style.color = "#fff";
+                  e.currentTarget.style.borderColor = "transparent";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundImage = "none";
+                  e.currentTarget.style.color = INK;
+                  e.currentTarget.style.borderColor = LINE;
                 }}
               >
                 View syllabus
@@ -428,14 +567,20 @@ export default function InstitutePrograms() {
         {/* Closing CTA */}
         <div
           className="mt-16 flex flex-col items-start justify-between gap-6 rounded-3xl p-8 sm:flex-row sm:items-center"
-          style={{ background: `linear-gradient(150deg, ${ACCENT_DEEP}, ${ACCENT})` }}
+          style={{
+            background: `linear-gradient(150deg, ${ACCENT_DEEP}, ${ACCENT})`,
+          }}
         >
           <div>
-            <h3 className="text-[20px] font-medium text-white" style={{ fontFamily: FONT_DISPLAY }}>
+            <h3
+              className="text-[20px] font-medium text-white"
+              style={{ fontFamily: FONT_DISPLAY }}
+            >
               Not sure which track fits?
             </h3>
             <p className="mt-1.5 text-[13.5px] leading-6 text-white/80">
-              Talk to our counsellor for a free assessment and personalised recommendation.
+              Talk to our counsellor for a free assessment and personalised
+              recommendation.
             </p>
           </div>
           <Link
@@ -444,7 +589,14 @@ export default function InstitutePrograms() {
           >
             Talk to a Counsellor
             <svg viewBox="0 0 16 16" className="h-3.5 w-3.5">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <path
+                d="M3 8h10M9 4l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
             </svg>
           </Link>
         </div>

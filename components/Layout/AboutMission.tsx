@@ -214,7 +214,7 @@ export function AboutMission() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-[#f7f5ff] py-20 sm:py-24 lg:py-28"
+      className="relative overflow-hidden bg-[#f7f5ff] py-12 sm:py-16 lg:py-20"
     >
       <div className="about-mission-glow absolute -left-16 top-8 h-72 w-72 rounded-full bg-violet-300/40 blur-3xl" />
       <div className="about-mission-glow absolute bottom-0 right-0 h-80 w-80 rounded-full bg-fuchsia-200/30 blur-3xl" />

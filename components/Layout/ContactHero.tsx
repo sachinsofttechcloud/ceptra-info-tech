@@ -100,7 +100,7 @@ export default function ContactHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-140 overflow-hidden bg-cover bg-center bg-no-repeat py-20 sm:min-h-140 sm:py-24 lg:min-h-145.5 lg:py-32 bg-[url('/contact-us/contact-us-hero-M.webp')] lg:bg-[url('/contact-us/contact-us-hero-D.webp')]"
+      className="relative min-h-80 overflow-hidden bg-cover bg-center bg-no-repeat py-20 sm:min-h-80 sm:py-24 lg:min-h-115.5 lg:py-32 bg-[url('/contact-us/contact-us-hero-M.webp')] lg:bg-[url('/contact-us/contact-us-hero-D.webp')]"
       style={{
         backgroundAttachment: "scroll",
         fontFamily: FONT_BODY,
@@ -116,7 +116,7 @@ export default function ContactHero() {
       />
 
       {/* Content */}
-      <div className="absolute inset-x-0 bottom-0 z-10 mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-20 sm:px-6 sm:pb-24 lg:px-8">
+      <div className="absolute inset-x-0 bottom-0 z-10 mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-10 sm:px-6 lg:pb-20 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <div
             ref={eyebrowRef}
@@ -163,7 +163,7 @@ export default function ContactHero() {
           {/* Main Heading */}
           <h1
             ref={headingRef}
-            className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl"
+            className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-3xl lg:text-6xl"
             style={{ fontFamily: FONT_DISPLAY }}
           >
             We&apos;re just a message away
@@ -172,7 +172,7 @@ export default function ContactHero() {
           {/* Description */}
           <p
             ref={descriptionRef}
-            className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-cyan-100/85 sm:text-xl"
+            className="mx-auto mt-4 max-w-2xl text-md leading-8 text-cyan-100/85 lg:text-xl"
           >
             Any questions? Our team is ready to assist you with admissions,
             programs and more.

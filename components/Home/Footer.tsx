@@ -8,13 +8,6 @@ import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * Font note: authored around Space Grotesk (display / headings) +
- * JetBrains Mono (eyebrow / meta) + Inter (body copy) — matching every
- * other section on the site. Load via `next/font/google` in your root
- * layout for production; system fallbacks are included so it renders
- * correctly as-is.
- */
 
 const PAPER = "#FAFAF8";
 const INK = "#14141C";
@@ -124,8 +117,8 @@ function FooterColumn({
         {title}
       </div>
       <ul className="mt-4 flex flex-col gap-2.5">
-        {links.map((link) => (
-          <li key={link.href}>
+        {links.map((link,id) => (
+          <li key={id}>
             <Link
               href={link.href}
               className="text-[13.5px] transition-colors duration-200"
@@ -231,8 +224,6 @@ export default function Footer() {
         });
       });
 
-      // Background: ambient blob drift (inner) + independent scroll parallax
-      // (outer wrapper) — split so the motions never fight each other.
       meshInnerRefs.current.forEach((blob, i) => {
         if (!blob) return;
         gsap.to(blob, {
@@ -277,9 +268,6 @@ export default function Footer() {
         });
       });
 
-      // Background: dot grid gently pans with scroll. Always fully visible —
-      // only its position animates, never opacity, so it can't get stuck
-      // invisible if the scroll trigger hasn't fired yet on load.
       if (gridRef.current) {
         gsap.to(gridRef.current, {
           backgroundPosition: "32px 32px",
@@ -418,7 +406,7 @@ export default function Footer() {
               style={{ color: INK_SOFT }}
             >
               Live, mentor-led training in Salesforce, Marketing Cloud and
-              modern web skills — built for real outcomes, not just
+              modern web skills built for real outcomes, not just
               certificates.
             </p>
 
@@ -447,7 +435,7 @@ export default function Footer() {
             </form>
             {subscribed && (
               <p className="mt-2 text-[12px]" style={{ color: ACCENT_DEEP }}>
-                {`You're on the list — welcome aboard.`}
+                {`You're on the list welcome aboard.`}
               </p>
             )}
           </div>

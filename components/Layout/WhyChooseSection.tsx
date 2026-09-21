@@ -21,9 +21,9 @@ interface ReasonCard {
 const REASONS: ReasonCard[] = [
   {
     number: "01",
-    title: "Real-World Projects",
+    title: "Real World Projects",
     description:
-      "Get hands-on experience by working on projects that mirror real industry scenarios.",
+      "Get hands on experience by working on projects that mirror real industry scenarios.",
     align: "left",
   },
   {

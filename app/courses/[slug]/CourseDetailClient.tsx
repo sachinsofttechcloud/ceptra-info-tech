@@ -930,7 +930,7 @@ export default function CourseDetailClient({
                 }}
                 className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
               >
-                <Check className="h-4 w-4" /> Purchased — Start Learning
+                <Check className="h-4 w-4" /> Purchased Start Learning
               </button>
               <button
                 type="button"
@@ -2253,7 +2253,7 @@ export default function CourseDetailClient({
                       UPI ID: {MERCHANT_UPI_ID}
                     </p>
                     <p className="text-[11px] text-slate-500 text-center mt-0.5">
-                      Scan via GPay / PhonePe / Paytm — the ₹
+                      Scan via GPay / PhonePe / Paytm the ₹
                       {course.price.toLocaleString("en-IN")} amount is
                       pre-filled automatically.
                     </p>
@@ -3123,7 +3123,7 @@ function ConfirmedDetailsCard({
           <>
             <CheckCircle2 className="h-4 w-4 text-white" />
             <span>
-              I&apos;ve Paid ₹{confirmedDetails.amount.toLocaleString("en-IN")} — Unlock Course
+              I&apos;ve Paid ₹{confirmedDetails.amount.toLocaleString("en-IN")} Unlock Course
             </span>
           </>
         )}

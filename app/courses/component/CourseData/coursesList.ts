@@ -258,7 +258,7 @@ const sfmcNextLiveDesc: CourseDescription = {
 
 const salesforceAdminDevDesc: CourseDescription = {
   about:
-    "Become job-ready on both the admin and development sides of Salesforce — from org setup and security to Apex, triggers, and Lightning Web Components.",
+    "Become job ready on both the admin and development sides of Salesforce from org setup and security to Apex, triggers, and Lightning Web Components.",
   sections: [
     {
       heading: "Salesforce Admin",

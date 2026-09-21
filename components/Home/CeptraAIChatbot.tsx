@@ -60,7 +60,7 @@ export default function CeptraAIChatbot() {
       id: "welcome-1",
       sender: "bot",
       text:
-        "Hello! 👋 Welcome to **Ceptra Infotech** — your premier hub for Salesforce, Cloud & AI Career Excellence!\n\n" +
+        "Hello! 👋 Welcome to **Ceptra Infotech** your premier hub for Salesforce, Cloud & AI Career Excellence!\n\n" +
         "I am your **Ceptra AI Advisor**. How can I help you today? Ask me anything about our live & recorded courses, placement assistance, fees, or book a free demo session!",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       suggestions: [

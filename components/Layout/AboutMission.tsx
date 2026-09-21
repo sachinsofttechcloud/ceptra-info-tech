@@ -294,7 +294,7 @@ export function AboutMission() {
 
           <div ref={contentRef} className="relative">
             <div className="fade-text mb-6 inline-flex rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-violet-700">
-              Hands-on Salesforce Training
+              Hands on Salesforce Training
             </div>
 
             <p className="fade-text text-base leading-8 text-slate-600 sm:text-lg">

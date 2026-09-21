@@ -147,5 +147,19 @@
     "payerUpiOrAccount": "9156198059@paytm",
     "claimedAt": 1787814582649,
     "formattedDate": "27/8/2026, 12:39:42 pm"
+  },
+  {
+    "transactionId": "CICAgPjM-NGHJQ",
+    "courseSlug": "lwc-recorded",
+    "courseTitle": "LWC",
+    "studentName": "sachin mohite",
+    "studentMobile": "9021465072",
+    "studentEmail": "sachin@gmail.com",
+    "amount": 1,
+    "gatewayType": "paytm",
+    "paymentMethod": "Paytm QR UPI",
+    "payerUpiOrAccount": "9021465072@paytm",
+    "claimedAt": 1789985617541,
+    "formattedDate": "21/9/2026, 3:43:37 pm"
   }
 ]

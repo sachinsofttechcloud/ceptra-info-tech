@@ -38,7 +38,7 @@ export const COURSES_DATABASE = [
     tags: ["LIVE CLASS", "FREE CONTENT", "TESTS"],
     category: "Live Classes",
     description:
-      "Complete hands-on journey from Email Studio to Journey Builder, Automation Studio, Cloud Pages, Contact Builder, and real-world campaigns.",
+      "Complete hands on journey from Email Studio to Journey Builder, Automation Studio, Cloud Pages, Contact Builder, and real world campaigns.",
     features: ["Email Studio & Journey Builder", "Automation Studio & SQL", "Real Client Case Studies", "1 Year Full Access"],
   },
   {
@@ -160,7 +160,7 @@ export function getAIAnswer(query: string): AIResponse {
           `• **Modules Covered**: Email Studio, Journey Builder, Automation Studio, SQL queries in SFMC, CloudPages, Contact Builder, and API Integration.\n` +
           `• **Learning Format**: Live interactive lectures + full video recordings + comprehensive study notes & assignments.\n` +
           `• **Validity**: 1 Year Full Access.\n` +
-          `• **Fee**: ₹32,000 (Original ₹40,000 — 20% Discount available).\n\n` +
+          `• **Fee**: ₹32,000 (Original ₹40,000 20% Discount available).\n\n` +
           `Taught directly by **Dr. Sarita Chandan Sakure** with live real-world brand campaign scenarios.`,
         suggestions: ["View SFMC Course Details", "Payment Options Available", "Placement Support for SFMC"],
         links: [{ label: "Explore SFMC Course", href: "/courses/marketing-cloud-engagement" }],
@@ -173,7 +173,7 @@ export function getAIAnswer(query: string): AIResponse {
           `🤖 **Data Cloud + Agentforce + Marketing Cloud Next**\n\n` +
           `• **Overview**: Learn Salesforce's flagship AI and Data engine. Build autonomous Agentforce agents, design unified customer profiles in Data Cloud (CDP), and automate end-to-end customer interactions.\n` +
           `• **Skills Acquired**: CDP Data Ingestion, Identity Resolution, Calculated Insights, Agentforce Prompt Templates & Actions.\n` +
-          `• **Fee**: ₹40,000 (20% OFF — Original ₹50,000).\n` +
+          `• **Fee**: ₹40,000 (20% OFF Original ₹50,000).\n` +
           `• **Validity**: 1 Full Year access.`,
         suggestions: ["View Data Cloud & Agentforce", "How to enroll in this course?", "Contact an Advisor"],
         links: [
@@ -253,7 +253,7 @@ export function getAIAnswer(query: string): AIResponse {
         `• **Qualifications**: BE, M.Tech, and PhD in Computer Science.\n` +
         `• **Experience**: 16+ Years of industry leadership, corporate training, and university teaching.\n` +
         `• **Credentials**: Trailhead **All Star Ranger**, certified Salesforce Consultant & Architect Mentor.\n` +
-        `• **Teaching Style**: 100% practical, zero fluff. Focuses on real architecture, hands-on code, enterprise scenarios, and debugging real-world production errors.`,
+        `• **Teaching Style**: 100% practical, zero fluff. Focuses on real architecture, hands on code, enterprise scenarios, and debugging real-world production errors.`,
       suggestions: [
         "What courses does Dr. Sarita teach?",
         "How can I join her live batch?",

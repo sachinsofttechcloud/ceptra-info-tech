@@ -110,7 +110,7 @@ const syllabusPdf = createSimplePdf(
 
 // PDF 2: Study Notes
 const notesPdf = createSimplePdf(
-  "Ceptra Infotech - Salesforce Hands-On Notes & Guide",
+  "Ceptra Infotech Salesforce Hands On Notes & Guide",
   "Comprehensive Study Guide & Real-Time Project Notes",
   [
     {
@@ -118,7 +118,7 @@ const notesPdf = createSimplePdf(
       points: [
         "Connectors: CRM Connector, S3 Connector, Ingestion API",
         "Match Rules: Exact Match vs Fuzzy Match rules",
-        "Data Graphs: Sub-second unified query performance",
+        "Data Graphs: Sub second unified query performance",
       ],
     },
     {
@@ -132,7 +132,7 @@ const notesPdf = createSimplePdf(
     {
       heading: "Key Concept 3: Best Practices & Certification Tips",
       points: [
-        "Trailhead Superbadges & Hands-On Practice Projects",
+        "Trailhead Superbadges & Hands On Practice Projects",
         "Interview Q&A: Governor Limits, Trigger Frameworks, Data Modeling",
         "Capstone Project Submission & Live Assessment Guidelines",
       ],

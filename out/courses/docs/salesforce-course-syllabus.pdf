@@ -1,0 +1,78 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 1324 >>
+stream
+BT
+/F1 22 Tf
+50 750 Td
+(Ceptra Infotech - Salesforce Master Course Syllabus) Tj
+/F1 12 Tf
+0 -25 Td
+(Instructor: Dr. Sarita Chandan Sakure | Ceptra Infotech Pvt Ltd) Tj
+0 -30 Td
+/F1 10 Tf
+/F1 14 Tf
+0 -20 Td
+(Module 1: Salesforce Core Architecture & Fundamentals) Tj
+/F1 10 Tf
+0 -15 Td
+(• Cloud Computing & Salesforce Multi-Tenant Architecture) Tj
+0 -15 Td
+(• Standard Objects, Custom Objects, Record Types & Fields) Tj
+0 -15 Td
+(• Security Model: Org-wide Defaults, Profiles, Roles, Permission Sets) Tj
+0 -15 Td
+(• Automation: Flow Builder, Process Automation, Validation Rules) Tj
+0 -10 Td
+/F1 14 Tf
+0 -20 Td
+(Module 2: Salesforce Marketing Cloud & Data Cloud) Tj
+/F1 10 Tf
+0 -15 Td
+(• Email Studio, Content Builder, Contact Builder & Data Extensions) Tj
+0 -15 Td
+(• Journey Builder, Automation Studio & Multi-channel Campaigns) Tj
+0 -15 Td
+(• Data Streams, DLO & DMO Mapping, Unified Customer Profiles) Tj
+0 -15 Td
+(• Calculated Insights, Segmentation & Activation Workflows) Tj
+0 -10 Td
+/F1 14 Tf
+0 -20 Td
+(Module 3: Agentforce & AI-Powered Workflows) Tj
+/F1 10 Tf
+0 -15 Td
+(• Agent Builder, Topics, Custom Instructions & Action Triggers) Tj
+0 -15 Td
+(• Prompt Builder, Grounding with Data Cloud & Trust Layer) Tj
+0 -15 Td
+(• Real-time Enterprise Marketing and Service Agent Use Cases) Tj
+0 -10 Td
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000234 00000 n 
+0000000307 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1724
+%%EOF

@@ -483,13 +483,13 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center justify-center gap-3">
             <Link
               href={ENROLL_LINK.href}
               ref={(el) => {
                 introRefs.current[6] = el as unknown as HTMLElement;
               }}
-              className="hidden h-10 items-center justify-center whitespace-nowrap rounded-full px-5 text-[13.5px] font-semibold text-white shadow-[0_10px_25px_-8px_rgba(91,79,224,0.6)] transition-transform duration-200 hover:scale-[1.04] lg:inline-flex"
+              className="hidden mt-4 h-10 items-center justify-center whitespace-nowrap rounded-full px-5 text-[13.5px] font-semibold text-white shadow-[0_10px_25px_-8px_rgba(91,79,224,0.6)] transition-transform duration-200 hover:scale-[1.04] lg:inline-flex"
               style={{
                 background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
               }}

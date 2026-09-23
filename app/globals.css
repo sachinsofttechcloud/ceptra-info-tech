@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source not "../out";
 
 /* Class-based dark mode so a toggle button (not just OS setting) can switch themes */
 @custom-variant dark (&:where(.dark, .dark *));

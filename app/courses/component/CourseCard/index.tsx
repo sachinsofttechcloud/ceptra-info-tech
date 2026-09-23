@@ -27,11 +27,15 @@ interface CourseCardProps {
 export default function CourseCard({ course }: CourseCardProps) {
   const hasDiscount =
     !!course.originalPrice && course.originalPrice > course.price;
+  const targetHref =
+    course.href && course.href.startsWith("/courses/")
+      ? course.href
+      : `/courses/${course.slug}`;
 
   return (
     <Link
-      href={course.href}
-      className="p-4 carousel-card group flex w-full shrink-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+      href={targetHref}
+      className="p-4 carousel-card group flex w-full max-w-sm shrink-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
     >
       {/* Course Image */}
       <div className="relative w-full overflow-hidden rounded-lg bg-slate-100">
@@ -55,7 +59,7 @@ export default function CourseCard({ course }: CourseCardProps) {
       <div className="mt-4 flex flex-1 flex-col">
         {/* Tags */}
         <div className="mb-2 flex flex-wrap gap-1.5">
-          {course.tags.map((tag) => (
+          {(course.tags || []).map((tag) => (
             <Tag key={tag} text={tag} />
           ))}
         </div>

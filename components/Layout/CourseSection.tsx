@@ -6,7 +6,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronLeft, ChevronRight, ArrowRight, ArrowLeft } from "lucide-react";
 import CourseCard from "@/app/courses/component/CourseCard";
-import data from "@/app/courses/component/CourseData/db.json";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,6 +13,7 @@ if (typeof window !== "undefined") {
 
 const ACCENT = "#5B4FE0";
 const AUTO_ROTATE_MS = 4000;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface Course {
   slug: string;
@@ -34,8 +34,28 @@ interface CourseGroup {
   data: Course[];
 }
 
-const COURSE_GROUPS: CourseGroup[] = data.courses as CourseGroup[];
 const ALL_COURSES_TYPE = "all-courses";
+
+let coursesRequest: Promise<CourseGroup[]> | null = null;
+
+function loadCourseGroups(force = false) {
+  if (force) coursesRequest = null;
+  if (!coursesRequest) {
+    coursesRequest = fetch(`${API_URL}/api/courses`, { cache: "no-store" })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok || !payload?.success || !Array.isArray(payload.courses)) {
+          throw new Error(payload?.message || "Unable to load courses.");
+        }
+        return payload.courses as CourseGroup[];
+      })
+      .catch((error) => {
+        coursesRequest = null;
+        throw error;
+      });
+  }
+  return coursesRequest;
+}
 
 function EdgeArrow({
   direction,
@@ -78,7 +98,13 @@ function useVisibleCount() {
   return count;
 }
 
-export default function PopularCourses({ groupType = "new-courses" }: { groupType?: string }) {
+export default function PopularCourses({
+  groupType = "new-courses",
+  nameFilter = "",
+}: {
+  groupType?: string;
+  nameFilter?: string;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -86,6 +112,39 @@ export default function PopularCourses({ groupType = "new-courses" }: { groupTyp
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+
+  const [courseGroups, setCourseGroups] = useState<CourseGroup[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = (force = false) => {
+      setIsLoading(true);
+      loadCourseGroups(force)
+        .then((groups) => {
+          if (!cancelled) {
+            setCourseGroups(groups);
+            setLoadError("");
+          }
+        })
+        .catch((error: unknown) => {
+          if (!cancelled) {
+            setLoadError(error instanceof Error ? error.message : "Unable to load courses.");
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setIsLoading(false);
+        });
+    };
+    load();
+    const refresh = () => load(true);
+    window.addEventListener("ceptra_courses_change", refresh);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("ceptra_courses_change", refresh);
+    };
+  }, []);
 
   const isAllCourses = groupType === ALL_COURSES_TYPE;
 
@@ -97,13 +156,15 @@ export default function PopularCourses({ groupType = "new-courses" }: { groupTyp
       seeAllHref: "/courses",
       data: Array.from(
         new Map(
-          COURSE_GROUPS.flatMap((g) => g.data).map((c) => [c.slug, c]),
+          courseGroups.flatMap((g) => g.data).map((c) => [c.slug, c]),
         ).values(),
       ),
     }
-    : COURSE_GROUPS.find((g) => g.type === groupType);
+    : courseGroups.find((g) => g.type === groupType);
 
-  const COURSES: Course[] = group?.data ?? [];
+  const COURSES: Course[] = (group?.data ?? []).filter((course) =>
+    course.title.toLowerCase().includes(nameFilter.trim().toLowerCase()),
+  );
   const layout = group?.layout ?? "vertical";
   const heading = group?.heading ?? "Courses";
 
@@ -222,6 +283,30 @@ export default function PopularCourses({ groupType = "new-courses" }: { groupTyp
   const showRightArrow = canNavigate && !isExpanded;
   const showDots = canNavigate;
 
+  if (isLoading) {
+    if (groupType !== "new-courses") return null;
+    return (
+      <section className="w-full bg-white py-14">
+        <div className="mx-auto flex max-w-7xl items-center justify-center px-4">
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-[#5B4FE0] border-t-transparent" />
+          <span className="ml-3 text-sm font-medium text-slate-500">Loading courses...</span>
+        </div>
+      </section>
+    );
+  }
+
+  if (loadError) {
+    if (groupType !== "new-courses") return null;
+    return (
+      <section className="w-full bg-white py-14">
+        <div className="mx-auto max-w-xl rounded-2xl border border-red-200 bg-red-50 px-6 py-5 text-center">
+          <p className="text-sm font-semibold text-red-700">{loadError}</p>
+          <p className="mt-1 text-xs text-red-600">Make sure the course API server is running.</p>
+        </div>
+      </section>
+    );
+  }
+
   if (total === 0) return null;
   if (isHiddenByOtherSection) return null;
 
@@ -298,7 +383,7 @@ export default function PopularCourses({ groupType = "new-courses" }: { groupTyp
             ref={trackRef}
             className="grid gap-4 md:px-6"
             style={{
-              gridTemplateColumns: `repeat(${Math.min(visibleCount, total)}, minmax(0, 1fr))`,
+              gridTemplateColumns: `repeat(${visibleCount}, minmax(0, 1fr))`,
             }}
           >
             {visibleCourses.map((course, i) => (

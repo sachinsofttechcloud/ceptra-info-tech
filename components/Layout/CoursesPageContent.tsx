@@ -6,7 +6,7 @@ import { ArrowLeft, Search, ArrowDownUp } from "lucide-react";
 import PopularCourses from "@/components/Layout/CourseSection";
 import FilterCourses from "@/components/Layout/FilterCourses";
 import CourseCard from "@/app/courses/component/CourseCard";
-import { ALL_COURSES } from "@/app/courses/component/CourseData/coursesList";
+import { API_URL } from "@/lib/admin";
 
 const FILTER_LABELS: Record<string, string> = {
   live: "Live Courses",
@@ -23,12 +23,62 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "popular", label: "Popular" },
 ];
 
+interface Course {
+  slug: string;
+  title: string;
+  image: string;
+  tags: string[];
+  price: number;
+  originalPrice?: number;
+  badge?: string;
+  href: string;
+  groupType?: string;
+  id?: number;
+}
+
 /* ============================================================
    FILTERED LISTING VIEW — shown only when ?filter= is present.
+   Fetches course card data directly from database API courses table.
 ============================================================ */
 export default function FilteredCoursesView({ filter }: { filter: string }) {
   const router = useRouter();
   const heading = FILTER_LABELS[filter] ?? "Courses";
+
+  const [dbCourses, setDbCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    fetch(`${API_URL}/api/courses`, { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!active) return;
+        if (data.success && Array.isArray(data.courses)) {
+          const map = new Map<string, Course>();
+          for (const group of data.courses) {
+            for (const item of group.data || []) {
+              if (item.slug && !map.has(item.slug)) {
+                map.set(item.slug, {
+                  ...item,
+                  groupType: group.type,
+                });
+              }
+            }
+          }
+          setDbCourses(Array.from(map.values()));
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch DB courses in FilteredCoursesView:", err);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -52,13 +102,34 @@ export default function FilteredCoursesView({ filter }: { filter: string }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
- const courses = useMemo(() => {
-    let list =
-      filter === "interview-readiness"
-        ? [...ALL_COURSES]
-        : ALL_COURSES.filter((c) => c.category === filter);
+  const courses = useMemo(() => {
+    let list = [...dbCourses];
 
-    console.log("filter", filter);
+    if (filter) {
+      const f = filter.toLowerCase();
+      if (f === "live") {
+        list = list.filter(
+          (c) =>
+            c.tags?.some((t) => t.toLowerCase().includes("live")) ||
+            c.title.toLowerCase().includes("live") ||
+            c.groupType?.toLowerCase().includes("live")
+        );
+      } else if (f === "interview-readiness" || f === "interview") {
+        list = list.filter(
+          (c) =>
+            c.tags?.some((t) => t.toLowerCase().includes("interview")) ||
+            c.title.toLowerCase().includes("interview") ||
+            c.groupType?.toLowerCase().includes("interview")
+        );
+      } else if (f === "recorded") {
+        list = list.filter(
+          (c) =>
+            c.tags?.some((t) => t.toLowerCase().includes("video") || t.toLowerCase().includes("recorded")) ||
+            c.title.toLowerCase().includes("recorded") ||
+            c.groupType?.toLowerCase().includes("recorded")
+        );
+      }
+    }
 
     if (debouncedSearch) {
       list = list.filter((c) => c.title.toLowerCase().includes(debouncedSearch));
@@ -73,17 +144,17 @@ export default function FilteredCoursesView({ filter }: { filter: string }) {
         sorted.sort((a, b) => b.price - a.price);
         break;
       case "popular":
-        sorted.sort((a, b) => b.popularity - a.popularity);
+        sorted.sort((a, b) => (b.id || 0) - (a.id || 0));
         break;
       case "newest":
-        sorted.sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime());
+        sorted.sort((a, b) => (b.id || 0) - (a.id || 0));
         break;
       default:
         break;
     }
 
     return sorted;
-  }, [filter, debouncedSearch, sortBy]);
+  }, [dbCourses, filter, debouncedSearch, sortBy]);
 
   const currentSortLabel = sortBy ? SORT_OPTIONS.find((o) => o.value === sortBy)?.label : "Sort";
 

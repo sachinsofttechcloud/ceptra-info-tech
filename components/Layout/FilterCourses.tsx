@@ -113,8 +113,8 @@ export default function FilterCourses({ groupType = "" }: { groupType?: string }
             ease: "power2.out",
             scrollTrigger: {
               trigger: el,
-              start: "top 90%",
-              toggleActions: "play reverse play reverse",
+              start: "top 95%",
+
             },
           },
         );
@@ -134,7 +134,6 @@ export default function FilterCourses({ groupType = "" }: { groupType?: string }
             scrollTrigger: {
               trigger: el,
               start: "top 92%",
-              toggleActions: "play reverse play reverse",
             },
           },
         );

@@ -112,10 +112,8 @@
 //   return ALL_COURSES.map((c) => ({ slug: c.slug }));
 // }
 
-// app/courses/[slug]/page.tsx
-import { notFound } from "next/navigation";
-import { ALL_COURSES } from "@/app/courses/component/CourseData/coursesList";
 import CourseDetailClient from "./CourseDetailClient";
+import { API_URL } from "@/lib/admin";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -123,15 +121,66 @@ interface PageProps {
 
 export default async function CourseDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const course = ALL_COURSES.find((c) => c.slug === slug);
 
-  if (!course) {
-    notFound();
+  let initialCourse: any = {
+    slug,
+    title: slug.replace(/-/g, " "),
+    image: "/courses/new-course/1.webp",
+    tags: ["VIDEOS", "FILES"],
+    price: 0,
+    href: `/courses/${slug}`,
+  };
+  let catalogBacked = false;
+
+  try {
+    const res = await fetch(`${API_URL}/api/courses/${encodeURIComponent(slug)}`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.course) {
+        initialCourse = {
+          ...initialCourse,
+          ...data.course,
+          href: `/courses/${slug}`,
+        };
+        catalogBacked = true;
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to fetch course server-side from database:", err);
   }
 
-  return <CourseDetailClient course={course} />;
+  return <CourseDetailClient course={initialCourse} catalogBacked={catalogBacked} />;
 }
 
-export function generateStaticParams() {
-  return ALL_COURSES.map((c) => ({ slug: c.slug }));
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(`${API_URL}/api/courses`, { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.courses)) {
+        const slugs = new Set<string>();
+        for (const group of data.courses) {
+          for (const item of group.data || []) {
+            if (item.slug) slugs.add(item.slug);
+          }
+        }
+        if (slugs.size > 0) {
+          return Array.from(slugs).map((slug) => ({ slug }));
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("generateStaticParams failed to fetch from backend API:", err);
+  }
+
+  return [
+    { slug: "marketing-cloud-engagement-data-cloud-agentforce-marketing-cloud-next" },
+    { slug: "marketing-cloud-engagement" },
+    { slug: "data-cloud-agentforce-marketing-cloud-next" },
+    { slug: "sfmc-next-live-class" },
+    { slug: "lwc" },
+  ];
 }
+

@@ -501,7 +501,7 @@ export default function Footer() {
                     />
                   </svg>
                   <span>
-                    In Front of KDK College of Engineering Darshan Colony
+                    KDK College, Chowk, Darshan Colony
                     <br />
                     Main Road, Nagpur, Maharashtra 440024
                   </span>

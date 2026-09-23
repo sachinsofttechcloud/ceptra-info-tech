@@ -54,7 +54,12 @@ const SIGNUP_SOCIALS = [
   { id: "sso", label: "SSO", Icon: SSOMark },
 ];
 
+import { useRouter } from "next/navigation";
+import { getStoredUser } from "@/components/Auth/AuthGuard";
+
 export default function Signup() {
+  const router = useRouter();
+
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -68,8 +73,21 @@ export default function Signup() {
   const badgeCard1Ref = useRef<HTMLDivElement>(null);
   const badgeCard2Ref = useRef<HTMLDivElement>(null);
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  useEffect(() => {
+    const existingUser = getStoredUser();
+    if (existingUser && existingUser.email) {
+      router.replace("/courses");
+    }
+  }, [router]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -77,7 +95,7 @@ export default function Signup() {
       tl.from(cardRef.current, { y: 26, opacity: 0, scale: 0.97, duration: 0.6 })
         .from(badgeRef.current, { y: 12, opacity: 0, duration: 0.4 }, "-=0.3")
         .from(headingRef.current, { y: 14, opacity: 0, duration: 0.45 }, "-=0.2")
-        .from(formRef.current ? Array.from(formRef.current.children) : [], { y: 12, opacity: 0, duration: 0.4, stagger: 0.06 }, "-=0.2")
+        .from(formRef.current, { y: 12, opacity: 0, duration: 0.4 }, "-=0.2")
         .from(visualRef.current, { scale: 0.92, opacity: 0, duration: 0.7, ease: "back.out(1.4)" }, "-=0.55")
         .from(stepRefs.current.filter(Boolean), { x: -14, opacity: 0, duration: 0.4, stagger: 0.1 }, "-=0.35")
         .from([badgeCard1Ref.current, badgeCard2Ref.current], { y: 18, opacity: 0, duration: 0.5, stagger: 0.1, ease: "back.out(2)" }, "-=0.5");
@@ -89,6 +107,62 @@ export default function Signup() {
     }, sectionRef);
     return () => ctx.revert();
   }, []);
+
+  async function handleSignup(e: React.FormEvent) {
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    const trimmedName = name.trim();
+    const normalizedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!trimmedName || trimmedName.length < 2) {
+      setErrorMsg("Please enter your full name (at least 2 characters).");
+      return;
+    }
+    if (!normalizedEmail) {
+      setErrorMsg("Please enter your email address.");
+      return;
+    }
+    if (!emailRegex.test(normalizedEmail)) {
+      setErrorMsg("Please enter a valid email address (e.g. name@example.com).");
+      return;
+    }
+    if (!password || password.length < 6) {
+      setErrorMsg("Password must be at least 6 characters long.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: normalizedEmail,
+          password,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setSuccessMsg(data.message || "Account created successfully! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/login-in");
+        }, 1200);
+      } else {
+        setErrorMsg(data.message || "Signup failed. Please try again.");
+      }
+    } catch (err) {
+      console.warn("Signup error:", err);
+      setErrorMsg("Failed to connect to backend server.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const student = [
       { src: "/home/akshara.webp", name: "Akshara" },
@@ -134,7 +208,19 @@ export default function Signup() {
             Start with a live batch, mentor support, and real project work.
           </p>
 
-          <form ref={formRef} className="mt-7 space-y-4" onSubmit={(e) => e.preventDefault()}>
+          {errorMsg && (
+            <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3.5 text-[13.5px] font-medium text-red-700">
+              {errorMsg}
+            </div>
+          )}
+
+          {successMsg && (
+            <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-[13.5px] font-medium text-emerald-700">
+              {successMsg}
+            </div>
+          )}
+
+          <form ref={formRef} className="mt-6 space-y-4" onSubmit={handleSignup}>
             <div>
               <label htmlFor="name" className="mb-1.5 block text-[13px] font-medium" style={{ color: INK }}>
                 Full name
@@ -142,6 +228,9 @@ export default function Signup() {
               <input
                 id="name"
                 type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                 style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
@@ -155,6 +244,9 @@ export default function Signup() {
               <input
                 id="signup-email"
                 type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                 style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
@@ -169,6 +261,9 @@ export default function Signup() {
                 <input
                   id="signup-password"
                   type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="8 symbols at least"
                   className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 pr-11 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                   style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
@@ -197,10 +292,11 @@ export default function Signup() {
 
             <button
               type="submit"
-              className="mt-2 inline-flex h-12 w-full items-center justify-center rounded-full text-[14.5px] font-semibold text-white shadow-[0_14px_30px_-10px_rgba(91,79,224,0.55)]"
+              disabled={loading}
+              className="mt-2 inline-flex h-12 w-full items-center justify-center rounded-full text-[14.5px] font-semibold text-white shadow-[0_14px_30px_-10px_rgba(91,79,224,0.55)] transition-opacity disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, rgb(91, 79, 224), rgb(138, 125, 255))" }}
             >
-              Sign Up
+              {loading ? "Creating account..." : "Sign Up"}
             </button>
 
             <div className="flex items-center gap-3 py-1">

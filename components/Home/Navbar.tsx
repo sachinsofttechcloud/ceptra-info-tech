@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+import { getStoredUser, setStoredUser } from "@/components/Auth/AuthGuard";
+import { isAdminEmail } from "@/lib/admin";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -407,6 +409,29 @@ export default function Navbar() {
     });
   }, [mobilePagesOpen]);
 
+  const [user, setUser] = useState<{ email: string; name?: string } | null>(null);
+
+  useEffect(() => {
+    const syncUser = () => setUser(getStoredUser());
+    syncUser();
+
+    window.addEventListener("ceptra_auth_change", syncUser);
+    window.addEventListener("storage", syncUser);
+    const interval = setInterval(syncUser, 10000);
+
+    return () => {
+      window.removeEventListener("ceptra_auth_change", syncUser);
+      window.removeEventListener("storage", syncUser);
+      clearInterval(interval);
+    };
+  }, [pathname]);
+
+  const handleLogout = () => {
+    setStoredUser(null);
+    setUser(null);
+    window.location.href = "/";
+  };
+
   return (
     <>
       <div
@@ -422,16 +447,16 @@ export default function Navbar() {
             }}
             className="group flex shrink-0 items-center gap-2"
           >
-           
-              <Image
-                src="/navbar/ceptra-infotech-icon.png"
-                alt="Ceptra Infotech"
-                width={32}
-                height={32}
-                className="object-contain"
-                priority
-              />
-     
+
+            <Image
+              src="/navbar/ceptra-infotech-icon.png"
+              alt="Ceptra Infotech"
+              width={32}
+              height={32}
+              className="object-contain"
+              priority
+            />
+
           </Link>
 
           <div className="hidden items-center gap-7 lg:flex">
@@ -443,13 +468,6 @@ export default function Navbar() {
                 introRefs.current[1] = el;
               }}
             />
-            {/* <div
-              ref={(el) => {
-                introRefs.current[2] = el;
-              }}
-            >
-              <DropdownNav label="Courses" items={COURSE_LINKS} wide />
-            </div> */}
             <DesktopLink
               label={COURSE_LINK.label}
               href={COURSE_LINK.href}
@@ -483,13 +501,44 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center justify-center gap-3">
+          <div className="flex  items-center justify-center gap-3">
+            {user ? (
+              <>
+                {isAdminEmail(user.email) && (
+                  <Link
+                    href="/admin"
+                    className="hidden h-10 items-center justify-center whitespace-nowrap rounded-full border border-[#5B4FE0]/30 px-4 text-[13px] font-semibold text-[#5B4FE0] lg:inline-flex"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="hidden h-10 items-center justify-center whitespace-nowrap rounded-full text-white px-4 text-[13px] font-semibold text-[#12121a] transition-colors hover:bg-black/[.07] lg:inline-flex"
+                  style={{
+                    background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login-in"
+                className="hidden h-10 items-center justify-center whitespace-nowrap rounded-full text-white px-4 text-[13px] font-semibold text-[#12121a] transition-colors hover:bg-black/[.03] lg:inline-flex"
+                style={{
+                  background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
+                }}
+              >
+                Sign In
+              </Link>
+            )}
             <Link
               href={ENROLL_LINK.href}
               ref={(el) => {
                 introRefs.current[6] = el as unknown as HTMLElement;
               }}
-              className="hidden mt-4 h-10 items-center justify-center whitespace-nowrap rounded-full px-5 text-[13.5px] font-semibold text-white shadow-[0_10px_25px_-8px_rgba(91,79,224,0.6)] transition-transform duration-200 hover:scale-[1.04] lg:inline-flex"
+              className="hidden mt-5 h-10 items-center justify-center whitespace-nowrap rounded-full px-5 text-[13.5px] font-semibold text-white shadow-[0_10px_25px_-8px_rgba(91,79,224,0.6)] transition-transform duration-200 hover:scale-[1.04] lg:inline-flex"
               style={{
                 background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
               }}
@@ -636,11 +685,48 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="border-t border-black/[.06] px-6 py-5">
+          <div className="border-t border-black/[.06] px-6 py-5 flex flex-col gap-3">
+            {user ? (
+              <>
+                {isAdminEmail(user.email) && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="flex h-11 items-center justify-center rounded-full border border-[#5B4FE0]/30 text-[14px] font-semibold text-[#5B4FE0]"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex h-11 items-center justify-center rounded-full text-white text-[14px] font-semibold text-[#12121a]"
+                  style={{
+                    background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login-in"
+                onClick={() => setIsOpen(false)}
+                className="flex h-11 items-center justify-center rounded-full text-white text-[14px] font-semibold"
+                style={{
+                  background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
+                }}
+              >
+                Sign In
+              </Link>
+            )}
+
             <Link
               href={ENROLL_LINK.href}
               onClick={() => setIsOpen(false)}
-              className="flex h-11 items-center justify-center rounded-full text-[14px] font-semibold text-white"
+              className="flex h-11 items-center justify-center rounded-full text-[14px] font-semibold text-white shadow-md"
               style={{
                 background: `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`,
               }}

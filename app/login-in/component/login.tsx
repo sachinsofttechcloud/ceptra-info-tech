@@ -17,6 +17,7 @@ const FONT_MONO = "'JetBrains Mono', var(--font-mono, 'JetBrains Mono'), ui-mono
 const RING_RADIUS = 42;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 const COURSE_PROGRESS = 0.82;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 function GoogleMark() {
   return (
@@ -52,7 +53,19 @@ const LOGIN_SOCIALS = [
   { id: "apple", label: "Apple", Icon: AppleMark },
 ];
 
+import { useRouter, useSearchParams } from "next/navigation";
+import { getStoredUser, setStoredUser } from "@/components/Auth/AuthGuard";
+
+const SPECIAL_EMAILS = [
+  "chandan@ceptrainfotech.com",
+  "chandan.sakure@gmail.com",
+];
+
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get("redirect") || "/courses";
+
   const sectionRef = useRef<HTMLElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -65,14 +78,26 @@ export default function LoginPage() {
   const badgeCard3Ref = useRef<HTMLDivElement>(null);
   const progressRingRef = useRef<SVGCircleElement>(null);
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  useEffect(() => {
+    const existingUser = getStoredUser();
+    if (existingUser && existingUser.email) {
+      router.replace(redirectTarget);
+    }
+  }, [router, redirectTarget]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.from(badgeRef.current, { y: 14, opacity: 0, duration: 0.5 })
         .from(headingRef.current, { y: 18, opacity: 0, duration: 0.55 }, "-=0.25")
-        .from(formRef.current ? Array.from(formRef.current.children) : [], { y: 14, opacity: 0, duration: 0.45, stagger: 0.07 }, "-=0.25")
+        .from(formRef.current, { y: 14, opacity: 0, duration: 0.45 }, "-=0.25")
         .from(visualRef.current, { scale: 0.92, opacity: 0, duration: 0.7, ease: "back.out(1.4)" }, "-=0.5")
         .from(progressRingRef.current, { strokeDashoffset: RING_CIRCUMFERENCE, duration: 1.1, ease: "power2.out" }, "-=0.5")
         .from(
@@ -90,6 +115,56 @@ export default function LoginPage() {
     }, sectionRef);
     return () => ctx.revert();
   }, []);
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!normalizedEmail) {
+      setErrorMsg("Please enter your email address.");
+      return;
+    }
+
+    if (!emailRegex.test(normalizedEmail)) {
+      setErrorMsg("Please enter a valid email address (e.g. name@example.com).");
+      return;
+    }
+
+    if (!SPECIAL_EMAILS.includes(normalizedEmail) && !password) {
+      setErrorMsg("Please enter your password.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail, password }),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setStoredUser(data.user || { email: normalizedEmail });
+        setSuccessMsg(data.message || "Login successful! Redirecting...");
+        setTimeout(() => {
+          router.replace(redirectTarget);
+        }, 500);
+      } else {
+        setErrorMsg(data.message || "Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      console.warn("Server connection failed, using local check:", err);
+      setErrorMsg("Unable to connect to login server. Please verify backend service.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden bg-white py-20 md:py-28">
@@ -117,7 +192,19 @@ export default function LoginPage() {
             Sign in to pick up your batch, projects, and mentor notes right where you left off.
           </p>
 
-          <form ref={formRef} className="mt-8 space-y-4" onSubmit={(e) => e.preventDefault()}>
+          {errorMsg && (
+            <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3.5 text-[13.5px] font-medium text-red-700">
+              {errorMsg}
+            </div>
+          )}
+
+          {successMsg && (
+            <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-[13.5px] font-medium text-emerald-700">
+              {successMsg}
+            </div>
+          )}
+
+          <form ref={formRef} className="mt-6 space-y-4" onSubmit={handleLogin}>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-[13px] font-medium" style={{ color: INK }}>
                 Email address
@@ -125,6 +212,9 @@ export default function LoginPage() {
               <input
                 id="email"
                 type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                 style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
@@ -144,6 +234,8 @@ export default function LoginPage() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="8 symbols at least"
                   className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 pr-11 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                   style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
@@ -166,10 +258,11 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="mt-2 inline-flex h-12 w-full items-center justify-center rounded-full text-[14.5px] font-semibold text-white shadow-[0_14px_30px_-10px_rgba(91,79,224,0.55)]"
+              disabled={loading}
+              className="mt-2 inline-flex h-12 w-full items-center justify-center rounded-full text-[14.5px] font-semibold text-white shadow-[0_14px_30px_-10px_rgba(91,79,224,0.55)] transition-opacity disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, rgb(91, 79, 224), rgb(138, 125, 255))" }}
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
 
             <div className="flex items-center gap-3 py-1">

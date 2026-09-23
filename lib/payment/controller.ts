@@ -276,6 +276,24 @@ export class PaymentController {
           record,
         }),
       });
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      await fetch(`${apiUrl}/api/payments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          transactionId: record.transactionId,
+          courseSlug: record.courseSlug,
+          courseTitle: record.courseTitle,
+          studentName: record.studentName,
+          studentEmail: record.studentEmail,
+          studentMobile: record.studentMobile,
+          amount: record.amount,
+          gateway: record.gatewayType,
+          paymentMethod: record.paymentMethod,
+          payerUpi: record.payerUpiOrAccount,
+          status: "SUCCESS",
+        }),
+      });
     } catch (err) {
       console.warn("[PaymentController] Failed to persist transaction to backend:", err);
     }

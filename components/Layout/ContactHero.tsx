@@ -87,12 +87,20 @@ export default function ContactHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-80 overflow-hidden bg-cover bg-center bg-no-repeat py-20 sm:min-h-80 sm:py-24 lg:min-h-115.5 lg:py-32 bg-[url('/contact-us/contact-us-hero-M.webp')] lg:bg-[url('/contact-us/contact-us-hero-D.webp')]"
-      style={{
-        backgroundAttachment: "scroll",
-        fontFamily: FONT_BODY,
-      }}
+      className="relative min-h-80 overflow-hidden py-20 sm:min-h-80 sm:py-24 lg:min-h-115.5 lg:py-32"
+      style={{ fontFamily: FONT_BODY }}
     >
+      <img
+        src="/contact-us/contact-us-hero-M.webp"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover lg:hidden"
+      />
+      <img
+        src="/contact-us/contact-us-hero-D.webp"
+        alt=""
+        className="absolute inset-0 hidden h-full w-full object-cover lg:block"
+      />
+
       {/* Blackish overlay */}
       <div
         className="pointer-events-none absolute inset-0 z-0"

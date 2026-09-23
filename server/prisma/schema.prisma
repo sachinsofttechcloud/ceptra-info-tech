@@ -1,0 +1,64 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Signup {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  password     String
+  otp          String?
+  otpExpiresAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("signup")
+}
+
+model Course {
+  id            Int     @id @default(autoincrement())
+  groupType     String  @map("group_type") @db.VarChar(100)
+  layout        String? @db.VarChar(50)
+  heading       String? @db.VarChar(255)
+  seeAllHref    String? @map("see_all_href") @db.VarChar(255)
+  sortOrder     Int     @default(0) @map("sort_order")
+  itemOrder     Int     @default(0) @map("item_order")
+  slug          String  @db.VarChar(255)
+  title         String  @db.VarChar(500)
+  image         String? @db.VarChar(500)
+  tags          String?
+  price         Int
+  originalPrice Int?    @map("original_price")
+  badge         String? @db.VarChar(100)
+  href          String? @db.VarChar(500)
+  pdfs          String?
+  videos        String?
+
+  @@unique([groupType, slug])
+  @@map("courses")
+}
+
+model Payment {
+  id              Int      @id @default(autoincrement())
+  transactionId   String   @unique @map("transaction_id") @db.VarChar(120)
+  courseSlug      String?  @map("course_slug") @db.VarChar(255)
+  courseTitle     String?  @map("course_title") @db.VarChar(500)
+  studentName     String?  @map("student_name") @db.VarChar(255)
+  studentEmail    String?  @map("student_email") @db.VarChar(255)
+  studentMobile   String?  @map("student_mobile") @db.VarChar(40)
+  amount          Int?
+  gateway         String?  @db.VarChar(80)
+  paymentMethod   String?  @map("payment_method") @db.VarChar(120)
+  payerUpi        String?  @map("payer_upi") @db.VarChar(255)
+  status          String   @default("SUCCESS") @db.VarChar(30)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("payments")
+}

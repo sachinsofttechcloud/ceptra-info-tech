@@ -1,0 +1,51 @@
+[
+  {
+    "id": 4,
+    "name": "sachin mohite",
+    "email": "sachin@gmail.com",
+    "password": "Sachin@123#$",
+    "createdAt": "2026-09-23T05:10:56.561Z"
+  },
+  {
+    "id": 5,
+    "name": "Chandan Ceptra",
+    "email": "chandan@ceptrainfotech.com",
+    "password": null,
+    "createdAt": "2026-09-23T05:57:04.384Z"
+  },
+  {
+    "id": 6,
+    "name": "Chandan Ceptra",
+    "email": "chandan@ceptrainfotech.com",
+    "password": "sachin",
+    "createdAt": "2026-09-23T06:02:52.921Z"
+  },
+  {
+    "id": 7,
+    "name": "sachin mohite",
+    "email": "sachin@gmail.com",
+    "password": "Sachin@123#$",
+    "createdAt": "2026-09-23T06:59:37.574Z"
+  },
+  {
+    "id": 8,
+    "name": "Chandan Ceptra",
+    "email": "chandan@ceptrainfotech.com",
+    "password": "sacdfdfdf",
+    "createdAt": "2026-09-23T07:09:49.300Z"
+  },
+  {
+    "id": 9,
+    "name": "Tejas mahajne",
+    "email": "tejas@gmail.com",
+    "password": "Tejas@123#$",
+    "createdAt": "2026-09-23T10:53:52.812Z"
+  },
+  {
+    "id": 10,
+    "name": "Chandan Ceptra",
+    "email": "chandan@ceptrainfotech.com",
+    "password": "sadfdsdf",
+    "createdAt": "2026-09-23T10:59:51.520Z"
+  }
+]

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "1790074478148",
+    "name": "Rahul Sharma",
+    "email": "student_1790074478148@ceptrainfotech.com",
+    "password": "newpassword456",
+    "otp": null,
+    "otpExpiresAt": null,
+    "createdAt": "2026-09-22T10:54:38.148Z"
+  },
+  {
+    "id": "1790076021677",
+    "name": "Test User",
+    "email": "testuser_1790076021469@example.com",
+    "password": "newpassword123",
+    "otp": null,
+    "otpExpiresAt": null,
+    "createdAt": "2026-09-22T11:20:21.677Z"
+  },
+  {
+    "id": "1790076047405",
+    "name": "Expire Test",
+    "email": "expire_test@example.com",
+    "password": "password123",
+    "otp": "8075",
+    "otpExpiresAt": "2026-09-22T11:21:17.418Z",
+    "createdAt": "2026-09-22T11:20:47.405Z"
+  },
+  {
+    "id": "1790080496725",
+    "name": "sachin mohite",
+    "email": "sachin@gmail.com",
+    "password": "Sachin@123#$",
+    "otp": null,
+    "otpExpiresAt": null,
+    "createdAt": "2026-09-22T12:34:56.725Z",
+    "lastLoginAt": "2026-09-23T06:59:37.570Z"
+  }
+]

@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "postinstall": "prisma skills sync || exit 0"
   },
   "keywords": [],
   "type": "commonjs",
@@ -20,7 +21,8 @@
     "dotenv": "^18.0.2",
     "express": "^5.2.1",
     "nodemon": "^3.1.14",
-    "pg": "^8.23.0"
+    "pg": "^8.23.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@prisma/cli-engine": "^0.4.0",

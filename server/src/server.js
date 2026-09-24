@@ -6,6 +6,7 @@ const authRouter = require('./routes/auth');
 const courseRouter = require('./routes/courses');
 const adminRouter = require('./routes/admin');
 const paymentRouter = require('./routes/payments');
+const acknowledgementsRouter = require('./routes/acknowledgements');
 const db = require('./lib/db');
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/courses', courseRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/payments', paymentRouter);
+app.use('/api/acknowledgements', acknowledgementsRouter);
 
 db.ready.then(() => {
   app.listen(port, () => {

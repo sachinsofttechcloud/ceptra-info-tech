@@ -16,10 +16,12 @@ async function sendPage(res, loader, req) {
   }
 
   await db.ready;
-  const rows = (await loader()).filter((row) => db.matchesQuery(row, req.query.q));
+  const q = req.query.query || req.query.q || '';
+  const rows = (await loader()).filter((row) => db.matchesQuery(row, q));
+  const limit = req.query.limit || req.query.pageSize || 10;
   return res.status(200).json({
     success: true,
-    ...db.paginate(rows, req.query.page, req.query.pageSize),
+    ...db.paginate(rows, req.query.page, limit),
   });
 }
 
@@ -41,4 +43,9 @@ exports.courses = (req, res) => sendPage(res, db.listCourseRows, req).catch((err
 exports.payments = (req, res) => sendPage(res, db.listPayments, req).catch((error) => {
   console.error('Admin payment list error:', error);
   res.status(500).json({ success: false, message: 'Unable to load payment data.' });
+});
+
+exports.acknowledgements = (req, res) => sendPage(res, db.listAcknowledgements, req).catch((error) => {
+  console.error('Admin acknowledgement list error:', error);
+  res.status(500).json({ success: false, message: 'Unable to load acknowledgement data.' });
 });

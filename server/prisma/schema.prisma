@@ -62,3 +62,16 @@ model Payment {
 
   @@map("payments")
 }
+
+model TermsAcknowledgement {
+  id            Int      @id @default(autoincrement())
+  studentName   String   @map("student_name") @db.VarChar(255)
+  courseName    String   @map("course_name") @db.VarChar(255)
+  mobileNumber  String   @map("mobile_number") @db.VarChar(40)
+  date          String   @db.VarChar(40)
+  acceptedTerms Boolean  @default(true) @map("accepted_terms")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("acknowledgements")
+}
+

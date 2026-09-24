@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "student_name": "sachin",
+    "course_name": "Salesforce Marketing Cloud (SFMC)",
+    "mobile_number": "9021345678",
+    "date": "2026-09-24",
+    "accepted_terms": true,
+    "created_at": "2026-09-24T06:57:32.765Z"
+  }
+]

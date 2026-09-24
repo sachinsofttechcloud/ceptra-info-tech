@@ -6,5 +6,6 @@ router.get('/signups', adminController.signups);
 router.get('/logins', adminController.logins);
 router.get('/courses', adminController.courses);
 router.get('/payments', adminController.payments);
+router.get('/acknowledgements', adminController.acknowledgements);
 
 module.exports = router;

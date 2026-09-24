@@ -151,6 +151,17 @@ async function initDb() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS acknowledgements (
+        id SERIAL PRIMARY KEY,
+        student_name VARCHAR(255) NOT NULL,
+        course_name VARCHAR(255) NOT NULL,
+        mobile_number VARCHAR(40) NOT NULL,
+        date VARCHAR(40) NOT NULL,
+        accepted_terms BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
 
     const existingCourses = await client.query('SELECT COUNT(*)::int AS count FROM courses');
     if (Number(existingCourses.rows[0].count) === 0) {
@@ -787,18 +798,44 @@ async function listLogins() {
 }
 
 async function listCourseRows() {
-  const rows = usePg && pgPool
+  const rawRows = usePg && pgPool
     ? (await pgPool.query('SELECT * FROM courses ORDER BY sort_order ASC, item_order ASC, id ASC')).rows.map(mapCourseRow)
     : (await getCourses()).courses.flatMap((group) =>
-      group.data.map((course) => ({ ...course, groupType: group.type, heading: group.heading }))
+      group.data.map((course) => ({ ...course, groupType: group.type || group.heading, heading: group.heading }))
     );
+
   const unique = new Map();
-  for (const row of rows) {
-    const existing = unique.get(row.slug);
+  for (const row of rawRows) {
+    const slugKey = (row.slug || row.title || '').trim().toLowerCase();
+    if (!slugKey) continue;
+
+    const newKeys = String(row.groupType || row.heading || '').split(',').map((s) => s.trim()).filter(Boolean);
+    const existing = unique.get(slugKey);
+
     if (!existing) {
-      unique.set(row.slug, row);
-    } else if (!String(existing.groupType).includes(row.groupType)) {
-      existing.groupType = `${existing.groupType}, ${row.groupType}`;
+      const keysSet = new Set(newKeys);
+      unique.set(slugKey, {
+        ...row,
+        keys: Array.from(keysSet),
+        groupType: Array.from(keysSet).join(', '),
+      });
+    } else {
+      const currentKeys = existing.keys || String(existing.groupType || '').split(',').map((s) => s.trim()).filter(Boolean);
+      newKeys.forEach((k) => {
+        if (k && !currentKeys.includes(k)) currentKeys.push(k);
+      });
+      existing.keys = currentKeys;
+      existing.groupType = currentKeys.join(', ');
+
+      if ((!existing.pdfs || existing.pdfs.length === 0) && row.pdfs && row.pdfs.length > 0) {
+        existing.pdfs = row.pdfs;
+      }
+      if ((!existing.videos || existing.videos.length === 0) && row.videos && row.videos.length > 0) {
+        existing.videos = row.videos;
+      }
+      if (!existing.badge && row.badge) {
+        existing.badge = row.badge;
+      }
     }
   }
   return [...unique.values()];
@@ -832,34 +869,88 @@ async function recordPayment(payment) {
   if (!entry.transaction_id) throw new Error('Transaction ID is required.');
 
   if (usePg && pgPool) {
-    await pgPool.query(
-      `INSERT INTO payments (
-        transaction_id, course_slug, course_title, student_name, student_email,
-        student_mobile, amount, gateway, payment_method, payer_upi, status
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-      ON CONFLICT (transaction_id) DO NOTHING`,
-      [
-        entry.transaction_id,
-        entry.course_slug,
-        entry.course_title,
-        entry.student_name,
-        entry.student_email,
-        entry.student_mobile,
-        entry.amount,
-        entry.gateway,
-        entry.payment_method,
-        entry.payer_upi,
-        entry.status,
-      ]
-    );
+    try {
+      await pgPool.query(
+        `INSERT INTO payments (
+          transaction_id, course_slug, course_title, student_name, student_email,
+          student_mobile, amount, gateway, payment_method, payer_upi, status
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+        ON CONFLICT (transaction_id) DO NOTHING`,
+        [
+          entry.transaction_id,
+          entry.course_slug,
+          entry.course_title,
+          entry.student_name,
+          entry.student_email,
+          entry.student_mobile,
+          entry.amount,
+          entry.gateway,
+          entry.payment_method,
+          entry.payer_upi,
+          entry.status,
+        ]
+      );
+    } catch (err) {
+      console.warn('PG payment insert error, fallback to JSON:', err.message);
+    }
   }
 
   const filePath = path.join(dataDir, 'payments.json');
   const rows = readJson(filePath, []);
-  if (!rows.some((row) => row.transaction_id === entry.transaction_id)) {
+  const index = rows.findIndex((p) => p.transaction_id === entry.transaction_id);
+  if (index >= 0) {
+    rows[index] = entry;
+  } else {
     rows.unshift(entry);
-    writeJson(filePath, rows);
   }
+  writeJson(filePath, rows);
+  return entry;
+}
+
+async function listAcknowledgements() {
+  if (usePg && pgPool) {
+    const res = await pgPool.query(
+      `SELECT * FROM acknowledgements ORDER BY created_at DESC`
+    );
+    return res.rows;
+  }
+  return readJson(path.join(dataDir, 'acknowledgements.json'), []);
+}
+
+async function recordAcknowledgement(ack) {
+  const entry = {
+    id: Date.now().toString(),
+    student_name: String(ack.studentName || ack.student_name || '').trim(),
+    course_name: String(ack.courseName || ack.course_name || '').trim(),
+    mobile_number: String(ack.mobileNumber || ack.mobile_number || '').trim(),
+    date: String(ack.date || new Date().toISOString().slice(0, 10)).trim(),
+    accepted_terms: true,
+    created_at: new Date().toISOString(),
+  };
+
+  if (!entry.student_name || !entry.course_name || !entry.mobile_number) {
+    throw new Error('Student name, course name, and mobile number are required.');
+  }
+
+  if (usePg && pgPool) {
+    try {
+      const res = await pgPool.query(
+        `INSERT INTO acknowledgements (
+          student_name, course_name, mobile_number, date, accepted_terms
+        ) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+        [entry.student_name, entry.course_name, entry.mobile_number, entry.date, entry.accepted_terms]
+      );
+      entry.id = res.rows[0].id;
+      entry.created_at = res.rows[0].created_at;
+    } catch (err) {
+      console.warn('PG acknowledgement insert error, fallback to JSON:', err.message);
+    }
+  }
+
+  const filePath = path.join(dataDir, 'acknowledgements.json');
+  const rows = readJson(filePath, []);
+  rows.unshift(entry);
+  writeJson(filePath, rows);
   return entry;
 }
 
@@ -881,6 +972,8 @@ module.exports = {
   listCourseRows,
   listPayments,
   recordPayment,
+  listAcknowledgements,
+  recordAcknowledgement,
   paginate,
   matchesQuery,
 };

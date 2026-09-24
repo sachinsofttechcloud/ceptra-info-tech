@@ -166,7 +166,7 @@ export const AboutVision = () => {
         {/* Heading */}
         <div ref={headingBoxRef} className="max-w-2xl">
           <span className="fade-heading inline-flex items-center rounded-full border border-violet-200 bg-violet-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-violet-700">
-            Our Vission
+            Our Vision
           </span>
           <h2
             className="fade-heading my-4 text-[32px] font-medium leading-[1.15] tracking-tight sm:text-[42px]"

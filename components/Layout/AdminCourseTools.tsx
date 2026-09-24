@@ -40,11 +40,11 @@ const CSV_TEMPLATE = `title,slug,price,original_price,image,tags,badge,pdfs,vide
 LWC Basics,lwc-basics,20000,24500,/courses/new-course/5.webp,"VIDEOS,FILES",NEW COURSE,Syllabus|/courses/docs/salesforce-course-syllabus.pdf|2.4 MB;Notes|/courses/docs/salesforce-study-notes.pdf|1.8 MB,Overview|https://www.youtube.com/watch?v=EfK0SURQ8X0|12:30;Hands on|https://www.youtube.com/watch?v=bDfOdFg5G1U&t=6s|18:45`;
 
 export default function AdminCourseTools({
-  nameFilter,
+  nameFilter = "",
   onNameFilter,
 }: {
-  nameFilter: string;
-  onNameFilter: (value: string) => void;
+  nameFilter?: string;
+  onNameFilter?: (value: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [panel, setPanel] = useState<"course" | "bulk" | null>(null);
@@ -245,7 +245,7 @@ export default function AdminCourseTools({
             </span>
             <input
               value={nameFilter}
-              onChange={(event) => onNameFilter(event.target.value)}
+              onChange={(event) => onNameFilter?.(event.target.value)}
               placeholder="Search a course"
               className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-[#5B4FE0]"
             />

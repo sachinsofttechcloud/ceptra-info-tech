@@ -279,7 +279,7 @@ const SECTIONS: Section[] = [
         items: [
           "BE/B.Tech Students",
           "BCA/MCA Students",
-          "Sc./M.Sc. Graduates",
+          "B.Sc/M.Sc. Graduates",
           "Diploma Students",
           "MBA Students",
           "Fresh Graduates",
@@ -299,7 +299,7 @@ const SECTIONS: Section[] = [
       {
         intro: "Choose a program that fits your goals:",
         items: [
-          "**3 Month** – Foundation Program",
+          "**3 Months** – Foundation Program",
           "**4 Months** – Intermediate Training",
           "**6 Months** – Advanced Internship with Live Projects",
         ],
@@ -823,7 +823,7 @@ function CtaBannerSection({ s }: { s: Section }) {
             <RichText text={p} boldClassName="font-bold text-white" />
           </p>
         ))}
-         <a
+        <a
           href="/contact-us"
           className="reveal-item mt-4 inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3 text-xs font-bold uppercase tracking-wider shadow-lg transition-transform hover:scale-105"
           style={{ color: ACCENT }}

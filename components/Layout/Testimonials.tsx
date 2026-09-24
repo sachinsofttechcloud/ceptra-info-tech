@@ -47,7 +47,7 @@ const TESTIMONIALS: Testimonial[] = [
     highlight: "simple way.",
     quoteAfter: " Highly recommended!",
     name: "Rakhi Chaudhari",
-    role: "Associate Saleforce Developer",
+    role: "Associate Salesforce Developer",
     avatar: "/home/rakhi.webp",
   },
   {
@@ -67,15 +67,15 @@ const TESTIMONIALS: Testimonial[] = [
     avatar: "/home/akshara.webp",
   },
   {
-    quoteBefore: "I am excited to share that I have secured a placment at IBM after stepping out of my comfort zone. I want to sincerely thank you for your constant support and guidence which played a key role in this achievement. Thank you once again Sarita ma'am, Nehal & ceptra team for being an incredible mentor and inspiration.",
+    quoteBefore: "I am excited to share that I have secured a placement at IBM after stepping out of my comfort zone. I want to sincerely thank you for your constant support and guidance which played a key role in this achievement. Thank you once again Sarita ma'am, Nehal & ceptra team for being an incredible mentor and inspiration.",
     highlight: "just a few months.",
     quoteAfter: "",
     name: "Jasbir Kaur Virdi",
-    role: "Saleforce Developer",
+    role: "Salesforce Developer",
     avatar: "/home/jasbir.webp",
   },
   {
-    quoteBefore: "Ma'am i got selected in scadea solution, hyderabad. Thank you so much it is possible just because of your guidence and daily interviews that really help me to build my confidence. I would like to thanks all the ceptra team.",
+    quoteBefore: "Ma'am i got selected in scadea solution, hyderabad. Thank you so much it is possible just because of your guidance and daily interviews that really help me to build my confidence. I would like to thanks all the ceptra team.",
     highlight: "name, not just my ID.",
     quoteAfter: "",
     name: "Shreya Meshram",
@@ -83,7 +83,7 @@ const TESTIMONIALS: Testimonial[] = [
     avatar: "/home/shreya.webp",
   },
   {
-    quoteBefore: "Finally cream came true this is only and only because of you. I remember that day last year on my birthday you had told you will have dream job and will complete all your dream. So this is first step of it. Before bdy i had done this gift to my parents. Thanks you ma'am",
+    quoteBefore: "Finally dream came true this is only and only because of you. I remember that day last year on my birthday you had told you will have dream job and will complete all your dream. So this is first step of it. Before bdy i had done this gift to my parents. Thanks you ma'am",
     highlight: "three interviews in a week.",
     quoteAfter: "",
     name: "Rohini",
@@ -91,7 +91,7 @@ const TESTIMONIALS: Testimonial[] = [
     avatar: "/home/rohini.webp",
   },
   {
-    quoteBefore: "YOur Motivation helped me to overcome my fears. You belived in mme and helped me to push my limits and come forward and prove myself. The way you speak is truly amazing and motivated not only me but my parents to belive in me",
+    quoteBefore: "YOur Motivation helped me to overcome my fears. You belived in me and helped me to push my limits and come forward and prove myself. The way you speak is truly amazing and motivated not only me but my parents to belive in me",
     highlight: "recorded courses",
     quoteAfter: " I'd tried before.",
     name: "Vinita Naryani",
@@ -99,7 +99,7 @@ const TESTIMONIALS: Testimonial[] = [
     avatar: "/home/vinita.webp",
   },
   {
-    quoteBefore: "Hello mam got selected at Kaseya. Thank you so much for for Motivation My offer letter comes before my degree that's only possible because you and your guidance. Thanks to you and all the ceptra team.",
+    quoteBefore: "Hello mam got selected at Kaseya. Thank you so much for the Motivation My offer letter comes before my degree that's only possible because you and your guidance. Thanks to you and all the ceptra team.",
     highlight: "clear, buildable path.",
     quoteAfter: "",
     name: "Chaitali Sakore",
@@ -165,17 +165,6 @@ export default function Testimonials() {
 
   const visible = useVisibleCount();
 
-  // Sliding-window carousel: instead of jumping between fixed, non-overlapping
-  // groups of cards (1-2-3, then 4-5-6, then 7-8-9), the window advances by
-  // ONE card each tick, so consecutive views always share cards:
-  // [1,2,3] -> [2,3,4] -> [3,4,5] -> ... -> [9,1,2] -> [1,2,3].
-  //
-  // To loop seamlessly we duplicate the first `visible` cards after the real
-  // list. That gives the track enough "real-looking" cards to slide into as
-  // the window approaches the end, and once we've slid exactly `total` steps
-  // the visible window is pixel-identical to the very first view — at that
-  // point we snap back to index 0 with no animation, so the loop never
-  // visibly jumps backward.
   const extended = useMemo(
     () => [...TESTIMONIALS, ...TESTIMONIALS.slice(0, visible)],
     [visible]
@@ -258,13 +247,6 @@ export default function Testimonials() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
-  // The track must be wider than the visible container so it has room to
-  // slide. Its total width is (extendedTotal / visible) * 100% of the
-  // container — e.g. with 12 cards and 3 visible, the track is 400% wide.
-  // Each card's flex-basis is then a fraction of the TRACK's own width
-  // (100 / extendedTotal), which works out to exactly (100 / visible)% of
-  // the visible container — i.e. each card renders at the correct size
-  // regardless of how many total cards (real + clones) exist.
   const trackWidthPercent = (extendedTotal / visible) * 100;
   const cardBasisPercent = 100 / extendedTotal;
 

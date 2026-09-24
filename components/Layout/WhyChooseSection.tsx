@@ -145,7 +145,7 @@ export default function WhyChooseSection() {
           className="my-2 text-[28px] font-medium leading-[1.15] tracking-tight sm:text-[36px]"
           style={{ fontFamily: FONT_DISPLAY }}
         >
-          Why Choose E-LearningIT for Your Internship?
+          Why Choose Ceptra Infotech for Your Internship?
         </h2>
       </div>
 

@@ -263,7 +263,7 @@ export default function InternshipHero() {
               fontFamily: FONT_DISPLAY,
             }}
           >
-            Welcome to E Learning IT Internship Program!
+            Welcome to Ceptra Infotech Internship Program!
           </h1>
 
           {/* Description */}
@@ -283,8 +283,7 @@ export default function InternshipHero() {
               sm:leading-7
             "
           >
-            Turn your passion for technology into a rewarding career with our E
-            Learning IT Internship Program.
+            Turn your passion for technology into a rewarding career with our Ceptra Infotech IT Internship Program.
           </p>
 
           {/* CTA */}

@@ -433,7 +433,7 @@ export const ALL_COURSES: CourseListItem[] = [
     tags: ["FREE CONTENT", "VIDEOS", "FILES"],
     price: 32000,
     originalPrice: 40000,
-    badge: "NEW COURSE",
+    // badge: "NEW COURSE",
     href: "/courses/marketing-cloud-engagement-recorded",
     category: "recorded",
     popularity: 74,

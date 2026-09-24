@@ -12,7 +12,7 @@ interface Course {
   title: string;
   image: string;
   tags: string[];
-  
+
   price: number;
   originalPrice?: number;
   badge?: string;
@@ -22,9 +22,10 @@ interface Course {
 interface CourseCardProps {
   course: Course;
   layout?: "vertical" | "horizontal";
+  heading?: string;
 }
 
-export default function CourseCard({ course }: CourseCardProps) {
+export default function CourseCard({ course, heading }: CourseCardProps) {
   const hasDiscount =
     !!course.originalPrice && course.originalPrice > course.price;
   const targetHref =
@@ -45,7 +46,7 @@ export default function CourseCard({ course }: CourseCardProps) {
           className="block h-auto w-full object-contain"
         />
 
-        {course.badge && (
+        {heading != "Recorded Courses" && course.badge && (
           <span
             className="absolute left-0 top-3 z-10 rounded-r-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white"
             style={{ backgroundColor: ACCENT }}

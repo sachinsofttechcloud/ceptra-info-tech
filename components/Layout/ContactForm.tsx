@@ -158,15 +158,15 @@ export default function ContactSection() {
           return "Full name is required.";
         }
 
-        if (nameValue.length < 4) {
-          return "Name must be at least 4 characters.";
+        if (nameValue.length < 2) {
+          return "Name must be at least 2 characters.";
         }
 
-        if (nameValue.length > 50) {
-          return "Name cannot exceed 50 characters.";
+        if (nameValue.length > 30) {
+          return "Name cannot exceed 30 characters.";
         }
 
-        if (!/^[a-zA-Z\s.'-]+$/.test(nameValue)) {
+        if (!/^[\p{L}\p{M}\s.'-]+$/u.test(nameValue)) {
           return "Please enter a valid name.";
         }
 
@@ -342,9 +342,9 @@ export default function ContactSection() {
   // --------------------------------------------------
 
   const isFormValid =
-    formData.fullName.trim().length >= 4 &&
-    formData.fullName.trim().length <= 50 &&
-    /^[a-zA-Z\s.'-]+$/.test(formData.fullName.trim()) &&
+    formData.fullName.trim().length >= 2 &&
+    formData.fullName.trim().length <= 30 &&
+    /^[\p{L}\p{M}\s.'-]+$/u.test(formData.fullName.trim()) &&
     formData.mobile.length === 10 &&
     /^[0-9]{10}$/.test(formData.mobile) &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim()) &&
@@ -355,84 +355,82 @@ export default function ContactSection() {
   // SUBMIT
   // --------------------------------------------------
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  if (!validateForm()) {
-    return;
-  }
+    if (!validateForm()) {
+      return;
+    }
 
-  const EMAILJS_SERVICE_ID = "service_8yk7hqy";
-  const EMAILJS_TEMPLATE_ID = "template_zpgyczh";
-  const EMAILJS_AUTOREPLY_TEMPLATE_ID = "template_r0lw4vh";
-  const EMAILJS_PUBLIC_KEY = "YqXjjAdQt3XzPV9hl";
+    const EMAILJS_SERVICE_ID = "service_8yk7hqy";
+    const EMAILJS_TEMPLATE_ID = "template_zpgyczh";
+    const EMAILJS_AUTOREPLY_TEMPLATE_ID = "template_r0lw4vh";
+    const EMAILJS_PUBLIC_KEY = "YqXjjAdQt3XzPV9hl";
 
-  try {
-    // 1) Notify the admin
-    await emailjs.send(
-      EMAILJS_SERVICE_ID,
-      EMAILJS_TEMPLATE_ID,
-      {
-        fullName: formData.fullName,
-        mobile: formData.mobile,
-        email: formData.email,
-        message: formData.message,
-      },
-      {
-        publicKey: EMAILJS_PUBLIC_KEY,
-      }
-    );
-
-    // 2) Auto-reply to the person who filled the form
     try {
+      // 1) Notify the admin
       await emailjs.send(
         EMAILJS_SERVICE_ID,
-        EMAILJS_AUTOREPLY_TEMPLATE_ID,
+        EMAILJS_TEMPLATE_ID,
         {
-          to_email: formData.email,
-          to_name: formData.fullName,
           fullName: formData.fullName,
+          mobile: formData.mobile,
+          email: formData.email,
+          message: formData.message,
         },
         {
           publicKey: EMAILJS_PUBLIC_KEY,
         }
       );
-    } catch (autoReplyError: unknown) {
-      // Pull the real reason out instead of logging a collapsed object —
-      // this prints directly as readable text in the console, no need to
-      // manually expand anything.
-      const err = autoReplyError as { status?: number; text?: string };
-      console.warn(
-        `Auto-reply failed to send status: ${err?.status ?? "unknown"}, reason: ${
-          err?.text ?? "no reason given"
+
+      // 2) Auto-reply to the person who filled the form
+      try {
+        await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_AUTOREPLY_TEMPLATE_ID,
+          {
+            to_email: formData.email,
+            to_name: formData.fullName,
+            fullName: formData.fullName,
+          },
+          {
+            publicKey: EMAILJS_PUBLIC_KEY,
+          }
+        );
+      } catch (autoReplyError: unknown) {
+        // Pull the real reason out instead of logging a collapsed object —
+        // this prints directly as readable text in the console, no need to
+        // manually expand anything.
+        const err = autoReplyError as { status?: number; text?: string };
+        console.warn(
+          `Auto-reply failed to send status: ${err?.status ?? "unknown"}, reason: ${err?.text ?? "no reason given"
+          }`
+        );
+        // Doesn't block success — admin already got notified either way.
+      }
+
+      setSubmitted(true);
+
+      setFormData({
+        fullName: "",
+        mobile: "",
+        email: "",
+        message: "",
+        consent: false,
+      });
+
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 2000);
+    } catch (error: unknown) {
+      const err = error as { status?: number; text?: string; message?: string };
+      console.error(
+        `Email sending failed — status: ${err?.status ?? "unknown"}, reason: ${err?.text || err?.message || "no reason given"
         }`
       );
-      // Doesn't block success — admin already got notified either way.
+      alert("Failed to send message. Please try again.");
     }
-
-    setSubmitted(true);
-
-    setFormData({
-      fullName: "",
-      mobile: "",
-      email: "",
-      message: "",
-      consent: false,
-    });
-
-    setTimeout(() => {
-      setSubmitted(false);
-    }, 2000);
-  } catch (error: unknown) {
-    const err = error as { status?: number; text?: string; message?: string };
-    console.error(
-      `Email sending failed — status: ${err?.status ?? "unknown"}, reason: ${
-        err?.text || err?.message || "no reason given"
-      }`
-    );
-    alert("Failed to send message. Please try again.");
-  }
-};
+  };
 
   return (
     <section
@@ -503,11 +501,14 @@ const handleSubmit = async (e: React.FormEvent) => {
                 onChange={handleChange}
                 maxLength={50}
                 placeholder="Enter full name"
-                className={`w-full rounded-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${
-                  errors.fullName
-                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                    : "border-slate-300 focus:border-cyan-500 focus:ring-cyan-100"
-                }`}
+                required
+                aria-required="true"
+                aria-invalid={!!errors.fullName}
+                aria-describedby={errors.fullName ? "fullName-error" : undefined}
+                className={`w-full rounded-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${errors.fullName
+                  ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                  : "border-slate-300 focus:border-cyan-500 focus:ring-cyan-100"
+                  }`}
               />
 
               {errors.fullName && (
@@ -524,21 +525,25 @@ const handleSubmit = async (e: React.FormEvent) => {
                 Mobile Number <span className="text-red-500">*</span>
               </label>
 
-              <input
-                id="mobile"
-                name="mobile"
-                type="tel"
-                inputMode="numeric"
-                value={formData.mobile}
-                onChange={handleChange}
-                maxLength={10}
-                placeholder="Enter mobile number"
-                className={`w-full rounded-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${
-                  errors.mobile
+              <div className="flex">
+                <span className="flex items-center rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 px-3 text-sm text-slate-500">
+                  +91
+                </span>
+                <input
+                  id="mobile"
+                  name="mobile"
+                  type="tel"
+                  inputMode="numeric"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  maxLength={10}
+                  placeholder="98765 43210"
+                  className={`w-full rounded-r-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${errors.mobile
                     ? "border-red-400 focus:border-red-400 focus:ring-red-100"
                     : "border-slate-300 focus:border-cyan-500 focus:ring-cyan-100"
-                }`}
-              />
+                    }`}
+                />
+              </div>
 
               {errors.mobile && (
                 <p className="mt-1.5 text-xs text-red-500">{errors.mobile}</p>
@@ -561,11 +566,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter email"
-                className={`w-full rounded-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${
-                  errors.email
-                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                    : "border-slate-300 focus:border-cyan-500 focus:ring-cyan-100"
-                }`}
+                className={`w-full rounded-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${errors.email
+                  ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                  : "border-slate-300 focus:border-cyan-500 focus:ring-cyan-100"
+                  }`}
               />
 
               {errors.email && (
@@ -589,11 +593,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Enter message"
-                className={`w-full resize-none rounded-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${
-                  errors.message
-                    ? "border-red-400 focus:border-red-400 focus:ring-red-100"
-                    : "border-slate-300 focus:border-cyan-500 focus:ring-cyan-100"
-                }`}
+                className={`w-full resize-none rounded-lg border px-4 py-3 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:ring-2 ${errors.message
+                  ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                  : "border-slate-300 focus:border-cyan-500 focus:ring-cyan-100"
+                  }`}
               />
 
               {errors.message && (
@@ -614,14 +617,18 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <span className="text-xs leading-5 text-slate-500">
                   By submitting this form, I acknowledge and agree to the{" "}
                   <a
-                    href="#"
+                    href="/terms/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-semibold text-slate-700 underline hover:text-cyan-600"
                   >
                     Terms & Conditions
                   </a>{" "}
                   and{" "}
                   <a
-                    href="#"
+                    href="/privacy-policy/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-semibold text-slate-700 underline hover:text-cyan-600"
                   >
                     Privacy Policy
@@ -639,11 +646,10 @@ const handleSubmit = async (e: React.FormEvent) => {
             <button
               type="submit"
               disabled={!isFormValid}
-              className={`group flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3.5 text-sm font-semibold transition-all duration-300 ${
-                isFormValid
-                  ? "cursor-pointer bg-[linear-gradient(135deg,#5B4FE0,#8A7DFF)] text-white shadow-md shadow-cyan-600/20 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,#5B4FE0,#9A8FFF)]/ hover:shadow-lg"
-                  : "cursor-not-allowed bg-slate-200 text-slate-400"
-              }`}
+              className={`group flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3.5 text-sm font-semibold transition-all duration-300 ${isFormValid
+                ? "cursor-pointer bg-[linear-gradient(135deg,#5B4FE0,#8A7DFF)] text-white shadow-md shadow-cyan-600/20 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,#5B4FE0,#9A8FFF)]/ hover:shadow-lg"
+                : "cursor-not-allowed bg-slate-200 text-slate-400"
+                }`}
             >
               {submitted ? (
                 <>
@@ -673,10 +679,8 @@ const handleSubmit = async (e: React.FormEvent) => {
         >
           <div>
             {/* Phone */}
-            <a
-              href="tel:8806600044"
-              className="contact-info-card group mb-5 flex items-start gap-4 rounded-xl p-3 transition-all duration-300 hover:bg-white/70"
-            >
+            {/* Phone */}
+            <div className="contact-info-card group mb-5 flex items-start gap-4 rounded-xl p-3 transition-all duration-300 hover:bg-white/70">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#8A7DFF] shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:bg-[#8A7DFF] group-hover:text-white">
                 <Phone size={20} />
               </div>
@@ -686,15 +690,21 @@ const handleSubmit = async (e: React.FormEvent) => {
                   Phone
                 </p>
 
-                <p className="mt-1 text-sm font-medium text-slate-700 group-hover:text-[#8A7DFF]">
-                  8806600044
-                </p>
+                <a
+                  href="tel:+918806600044"
+                  className="mt-1 block text-sm font-medium text-slate-700 hover:text-[#8A7DFF]"
+                >
+                  +91 88066 00044
+                </a>
 
-                <p className="text-sm font-medium text-slate-700 group-hover:text-[#8A7DFF]">
-                  7276782674
-                </p>
+                <a
+                  href="tel:+917276782674"
+                  className="block text-sm font-medium text-slate-700 hover:text-[#8A7DFF]"
+                >
+                  +91 72767 82674
+                </a>
               </div>
-            </a>
+            </div>
 
             {/* Email */}
             <a
@@ -739,14 +749,13 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <p className="mt-1 text-sm leading-6 text-slate-700">
                   Ceptra Infotech Pvt Ltd
                   <br />
-                  RH 22 Vyanktesh Nagar
+                  In front of KDK College,
                   <br />
-                  Nandanvan, Nagpur
+                  Chowk, Darshan Colony Main Rd,
                   <br />
-                  Maharashtra 440009
-                  <br />
-                  MH, IN
+                  Nagpur, Maharashtra 440024
                 </p>
+
               </div>
             </div>
 
@@ -771,13 +780,13 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* --------------------------------------------------
           MAP
       -------------------------------------------------- */}
 
-      <div
+      < div
         ref={mapRef}
         className="relative z-10 mx-auto mt-8 max-w-6xl overflow-hidden rounded-2xl bg-[#8A7DFF]/20 p-2 shadow-sm sm:mt-10"
       >
@@ -790,8 +799,8 @@ const handleSubmit = async (e: React.FormEvent) => {
             referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
-      </div>
-    </section>
+      </div >
+    </section >
   );
 }
 

@@ -112,11 +112,29 @@
 //   return ALL_COURSES.map((c) => ({ slug: c.slug }));
 // }
 
+import type { Metadata } from "next";
 import CourseDetailClient from "./CourseDetailClient";
 import { API_URL } from "@/lib/admin";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const formattedTitle = slug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  return {
+    title: `${formattedTitle} Course`,
+    description: `Master ${formattedTitle} with live hands-on projects, expert mentorship, and career placement assistance at Ceptra Infotech.`,
+    openGraph: {
+      title: `${formattedTitle} Course | Ceptra Infotech`,
+      description: `Master ${formattedTitle} with live hands-on projects, expert mentorship, and career placement assistance at Ceptra Infotech.`,
+      url: `https://ceptrainfotech.com/courses/${slug}/`,
+    },
+  };
 }
 
 export default async function CourseDetailPage({ params }: PageProps) {
@@ -133,9 +151,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
   let catalogBacked = false;
 
   try {
-    const res = await fetch(`${API_URL}/api/courses/${encodeURIComponent(slug)}`, {
-      cache: "no-store",
-    });
+    const res = await fetch(`${API_URL}/api/courses/${encodeURIComponent(slug)}`);
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.course) {
@@ -156,7 +172,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
 export async function generateStaticParams() {
   try {
-    const res = await fetch(`${API_URL}/api/courses`, { cache: "no-store" });
+    const res = await fetch(`${API_URL}/api/courses`);
     if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.courses)) {

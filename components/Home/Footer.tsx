@@ -36,8 +36,8 @@ const COURSE_LINKS = [
 const COMPANY_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about-us/" },
-  { label: "Internship", href: "/more/internship" },
-  { label: "Blogs", href: "/more/blogs" },
+  { label: "Internship", href: "/more/internship/" },
+  { label: "Blogs", href: "/more/blogs/" },
   { label: "Contact", href: "/contact-us/" },
 ];
 
@@ -46,13 +46,13 @@ const LEGAL_LINKS = [
   { label: "Terms of Service", href: "/terms/" },
 ];
 
-type SocialIcon = "linkedin" | "instagram" | "twitter" | "youtube";
+type SocialIcon = "linkedin" | "instagram" | "facebook" | "youtube";
 
 const SOCIALS: { icon: SocialIcon; href: string; label: string }[] = [
-  { icon: "linkedin", href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: "instagram", href: "https://instagram.com", label: "Instagram" },
-  { icon: "twitter", href: "https://twitter.com", label: "Twitter" },
-  { icon: "youtube", href: "https://youtube.com", label: "YouTube" },
+  { icon: "linkedin", href: "https://in.linkedin.com/company/ceptra-infotech-pvt-ltd", label: "LinkedIn" },
+  { icon: "instagram", href: "https://www.instagram.com/ceptra__infotech?stkn=MXZ4a21jbWUxdXh1Ng%3D%3D", label: "Instagram" },
+  { icon: "facebook", href: "https://www.facebook.com/people/Ceptra-Infotech/61572604720947/?rdid=H6F4JTZf9GPFBnmU&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1X5xhFDvr8%2F", label: "Facebook" },
+  { icon: "youtube", href: "https://www.youtube.com/@ceptrainfotechpvtltd422", label: "YouTube" },
 ];
 
 function SocialGlyph({ icon, color }: { icon: SocialIcon; color: string }) {
@@ -82,11 +82,11 @@ function SocialGlyph({ icon, color }: { icon: SocialIcon; color: string }) {
           <circle cx="17.2" cy="6.8" r="1" fill={color} stroke="none" />
         </svg>
       );
-    case "twitter":
+    case "facebook":
       return (
         <svg viewBox="0 0 24 24" className="h-4 w-4">
           <path
-            d="M20 5.5c-.7.4-1.5.7-2.3.8a3.9 3.9 0 0 0 1.7-2.2 8 8 0 0 1-2.5 1 4 4 0 0 0-6.8 3.6A11.3 11.3 0 0 1 2 4.8a4 4 0 0 0 1.2 5.3 3.9 3.9 0 0 1-1.8-.5v.05a4 4 0 0 0 3.2 3.9 4 4 0 0 1-1.8.07 4 4 0 0 0 3.7 2.8A8 8 0 0 1 1 18.4a11.3 11.3 0 0 0 6.1 1.8c7.3 0 11.3-6.1 11.3-11.3v-.5c.8-.6 1.4-1.3 1.9-2.1z"
+            d="M15 8.5h2V5.5h-2c-1.9 0-3.5 1.6-3.5 3.5v2H9.5v3H11.5V21h3v-7h2.2l.6-3h-2.8V9c0-.3.3-.5.7-.5z"
             {...common}
           />
         </svg>
@@ -117,7 +117,7 @@ function FooterColumn({
         {title}
       </div>
       <ul className="mt-4 flex flex-col gap-2.5">
-        {links.map((link,id) => (
+        {links.map((link, id) => (
           <li key={id}>
             <Link
               href={link.href}
@@ -138,6 +138,7 @@ function FooterColumn({
 function ScrollToTopButton() {
   const btnRef = useRef<HTMLButtonElement>(null);
   const [visible, setVisible] = useState(false);
+
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 480);
@@ -200,6 +201,7 @@ export default function Footer() {
   const gridRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -415,8 +417,11 @@ export default function Footer() {
               className="mt-6 flex max-w-xs gap-2"
             >
               <input
+                id="footer-newsletter-email"
+                name="email"
                 type="email"
                 required
+                aria-required="true"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@email.com"
@@ -501,7 +506,7 @@ export default function Footer() {
                     />
                   </svg>
                   <span>
-                    KDK College, Chowk, Darshan Colony
+                    In front of KDK College, Chowk, Darshan Colony
                     <br />
                     Main Road, Nagpur, Maharashtra 440024
                   </span>
@@ -626,14 +631,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="group flex h-9 w-9 items-center justify-center rounded-full border bg-white transition-colors duration-200"
                   style={{ borderColor: LINE }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = `linear-gradient(135deg, ${ACCENT}, ${ACCENT_SOFT})`;
-                    e.currentTarget.style.borderColor = "transparent";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "white";
-                    e.currentTarget.style.borderColor = LINE;
-                  }}
+
                 >
                   <span className="text-current [&_svg_*]:transition-colors [&_svg_*]:duration-200">
                     <SocialGlyph icon={social.icon} color={INK_SOFT} />
@@ -655,7 +653,7 @@ export default function Footer() {
           <div className="flex items-center gap-5">
             {LEGAL_LINKS.map((link) => (
               <Link
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 className="transition-colors duration-200"
                 onMouseEnter={(e) => (e.currentTarget.style.color = ACCENT)}

@@ -56,6 +56,9 @@ const SIGNUP_SOCIALS = [
 
 import { useRouter } from "next/navigation";
 import { getStoredUser } from "@/components/Auth/AuthGuard";
+import { emailError, mobileError, PASSWORD_HINT, passwordError } from "@/lib/validation";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function Signup() {
   const router = useRouter();
@@ -75,6 +78,7 @@ export default function Signup() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -115,34 +119,38 @@ export default function Signup() {
 
     const trimmedName = name.trim();
     const normalizedEmail = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const normalizedMobile = mobile.replace(/\D/g, "").slice(0, 10);
 
     if (!trimmedName || trimmedName.length < 2) {
       setErrorMsg("Please enter your full name (at least 2 characters).");
       return;
     }
-    if (!normalizedEmail) {
-      setErrorMsg("Please enter your email address.");
+    const invalidEmail = emailError(normalizedEmail);
+    if (invalidEmail) {
+      setErrorMsg(invalidEmail);
       return;
     }
-    if (!emailRegex.test(normalizedEmail)) {
-      setErrorMsg("Please enter a valid email address (e.g. name@example.com).");
+    const invalidMobile = mobileError(normalizedMobile);
+    if (invalidMobile) {
+      setErrorMsg(invalidMobile);
       return;
     }
-    if (!password || password.length < 6) {
-      setErrorMsg("Password must be at least 6 characters long.");
+    const weakPassword = passwordError(password);
+    if (weakPassword) {
+      setErrorMsg(weakPassword);
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: trimmedName,
           email: normalizedEmail,
+          mobile: normalizedMobile,
           password,
         }),
       });
@@ -247,7 +255,25 @@ export default function Signup() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="name@gmail.com"
+                className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
+                style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="signup-mobile" className="mb-1.5 block text-[13px] font-medium" style={{ color: INK }}>
+                Mobile number
+              </label>
+              <input
+                id="signup-mobile"
+                type="tel"
+                required
+                inputMode="numeric"
+                maxLength={10}
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                placeholder="10-digit mobile number"
                 className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                 style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
               />
@@ -264,7 +290,7 @@ export default function Signup() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="8 symbols at least"
+                  placeholder="Strong password"
                   className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 pr-11 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                   style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
                 />
@@ -277,6 +303,9 @@ export default function Signup() {
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
+              <p className="mt-1.5 text-[12px] leading-5" style={{ color: INK_SOFT }}>
+                {PASSWORD_HINT} Admin emails chandan@ceptrainfotech.com and chandan.sakure@gmail.com also need this password.
+              </p>
             </div>
 
             <label className="flex items-center gap-2 pt-1 text-[13px]" style={{ color: INK_SOFT }}>

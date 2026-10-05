@@ -284,11 +284,8 @@ export function getAIAnswer(query: string): AIResponse {
       answer:
         `💳 **Transparent Pricing & Payment Methods**\n\n` +
         `• **1 Full Year Access**: Every enrolled course provides 365-day access to all video lectures and PDF resources.\n` +
-        `• **Payment Gateway Options**:\n` +
-        `  1. **Paytm QR & UPI**: Instant scanning with auto-filled amount via GPay, PhonePe, Paytm, or BHIM.\n` +
-        `  2. **Razorpay**: All Visa / MasterCard / RuPay Debit & Credit Cards, NetBanking (HDFC, ICICI, SBI, Axis, etc.), and UPI.\n` +
-        `  3. **Direct Bank Transfer (NEFT / IMPS)**: ICICI Bank official account settlement.\n` +
-        `• **Instant Unlock**: Once your transaction is confirmed, your course unrolls and unlocks immediately on your student dashboard!`,
+        `• **Payment**: Checkout uses **Razorpay** only. You can pay with UPI, debit or credit cards, net banking, or wallets inside the Razorpay window.\n` +
+        `• **Instant Unlock**: After Razorpay confirms the payment and our server verifies it, the course unlocks on your student account.`,
       suggestions: [
         "How do I buy a course step-by-step?",
         "What is the fee for LWC?",
@@ -369,7 +366,7 @@ export function getAIAnswer(query: string): AIResponse {
       `• **Fees & Discounts** (Transparent pricing & 1-year access)\n` +
       `• **Placements & Salaries** (94% placement rate, mock interviews, 12 LPA highest package)\n` +
       `• **Trainer & Mentor Profile** (Dr. Sarita Chandan Sakure, 16+ yrs exp)\n` +
-      `• **Enrollment & Payment Process** (Paytm QR, Razorpay, UPI, Direct Bank)\n` +
+      `• **Enrollment & Payment Process** (Razorpay checkout)\n` +
       `• **Booking a Free Demo Class**\n\n` +
       `Feel free to click any of the suggestions below or ask your question directly!`,
     suggestions: [

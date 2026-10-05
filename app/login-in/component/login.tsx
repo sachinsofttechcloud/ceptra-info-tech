@@ -55,11 +55,7 @@ const LOGIN_SOCIALS = [
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { getStoredUser, setStoredUser } from "@/components/Auth/AuthGuard";
-
-const SPECIAL_EMAILS = [
-  "chandan@ceptrainfotech.com",
-  "chandan.sakure@gmail.com",
-];
+import { emailError, PASSWORD_HINT, passwordError } from "@/lib/validation";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -122,20 +118,14 @@ export default function LoginPage() {
     setSuccessMsg("");
 
     const normalizedEmail = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!normalizedEmail) {
-      setErrorMsg("Please enter your email address.");
+    const invalidEmail = emailError(normalizedEmail);
+    if (invalidEmail) {
+      setErrorMsg(invalidEmail);
       return;
     }
-
-    if (!emailRegex.test(normalizedEmail)) {
-      setErrorMsg("Please enter a valid email address (e.g. name@example.com).");
-      return;
-    }
-
-    if (!SPECIAL_EMAILS.includes(normalizedEmail) && !password) {
-      setErrorMsg("Please enter your password.");
+    const weakPassword = passwordError(password);
+    if (weakPassword) {
+      setErrorMsg(weakPassword);
       return;
     }
 
@@ -215,7 +205,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="name@gmail.com"
                 className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                 style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
               />
@@ -234,9 +224,10 @@ export default function LoginPage() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="8 symbols at least"
+                  placeholder="Strong password"
                   className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 pr-11 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                   style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
                 />
@@ -249,6 +240,9 @@ export default function LoginPage() {
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
+              <p className="mt-1.5 text-[12px] leading-5" style={{ color: INK_SOFT }}>
+                {PASSWORD_HINT} chandan@ceptrainfotech.com and chandan.sakure@gmail.com must sign in with a password too.
+              </p>
             </div>
 
             <label className="flex items-center gap-2 pt-1 text-[13px]" style={{ color: INK_SOFT }}>

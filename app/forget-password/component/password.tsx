@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import emailjs from "@emailjs/browser";
+import { emailError, passwordError } from "@/lib/validation";
 
 const ACCENT = "#5B4FE0";
 const ACCENT_SOFT = "#8A7DFF";
@@ -150,14 +151,9 @@ export default function Password() {
     setSuccessMsg("");
 
     const normalizedEmail = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!normalizedEmail) {
-      setErrorMsg("Please enter your email address.");
-      return;
-    }
-    if (!emailRegex.test(normalizedEmail)) {
-      setErrorMsg("Please enter a valid email address (e.g. name@example.com).");
+    const invalidEmail = emailError(normalizedEmail);
+    if (invalidEmail) {
+      setErrorMsg(invalidEmail);
       return;
     }
 
@@ -249,8 +245,9 @@ export default function Password() {
     setErrorMsg("");
     setSuccessMsg("");
 
-    if (!newPassword || newPassword.length < 6) {
-      setErrorMsg("New password must be at least 6 characters long.");
+    const weakPassword = passwordError(newPassword);
+    if (weakPassword) {
+      setErrorMsg(weakPassword);
       return;
     }
 
@@ -370,7 +367,7 @@ export default function Password() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder="name@gmail.com"
                   className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                   style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
                 />
@@ -467,7 +464,7 @@ export default function Password() {
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="8 symbols at least"
+                    placeholder="Strong password"
                     className="h-12 w-full rounded-xl border border-black/[.1] bg-black/[.015] px-4 pr-11 text-[14.5px] outline-none transition-colors focus:border-transparent focus:ring-2"
                     style={{ color: INK, ["--tw-ring-color" as string]: ACCENT_SOFT }}
                   />

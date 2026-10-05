@@ -102,6 +102,9 @@ async function initDb() {
       ALTER TABLE signup ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP;
     `);
     await client.query(`
+      ALTER TABLE signup ADD COLUMN IF NOT EXISTS mobile VARCHAR(10);
+    `);
+    await client.query(`
       CREATE TABLE IF NOT EXISTS login (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
@@ -150,6 +153,35 @@ async function initDb() {
         status VARCHAR(30) NOT NULL DEFAULT 'SUCCESS',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+    `);
+    await client.query(`ALTER TABLE payments ADD COLUMN IF NOT EXISTS razorpay_order_id VARCHAR(80);`);
+    await client.query(`ALTER TABLE payments ADD COLUMN IF NOT EXISTS razorpay_signature VARCHAR(128);`);
+    await client.query(`ALTER TABLE payments ADD COLUMN IF NOT EXISTS account_email VARCHAR(255);`);
+    await client.query(`ALTER TABLE payments ADD COLUMN IF NOT EXISTS currency VARCHAR(8) DEFAULT 'INR';`);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS razorpay_orders (
+        id SERIAL PRIMARY KEY,
+        order_id VARCHAR(80) UNIQUE NOT NULL,
+        receipt VARCHAR(40) UNIQUE NOT NULL,
+        course_slug VARCHAR(255) NOT NULL,
+        course_title VARCHAR(500),
+        student_name VARCHAR(255) NOT NULL,
+        student_email VARCHAR(255),
+        account_email VARCHAR(255) NOT NULL,
+        student_mobile VARCHAR(40) NOT NULL,
+        student_state VARCHAR(120),
+        amount_rupees INT NOT NULL,
+        amount_paise INT NOT NULL,
+        currency VARCHAR(8) NOT NULL DEFAULT 'INR',
+        status VARCHAR(20) NOT NULL DEFAULT 'created',
+        razorpay_payment_id VARCHAR(80),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        paid_at TIMESTAMP
+      );
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS payments_course_account_idx
+      ON payments (course_slug, account_email);
     `);
     await client.query(`
       CREATE TABLE IF NOT EXISTS acknowledgements (
@@ -219,6 +251,28 @@ async function initDb() {
 
 const ready = initDb().catch((e) => console.warn('DB init warning:', e.message));
 
+async function accountCanPay(email) {
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  if (!normalizedEmail) return false;
+  const signup = await findUserByEmail(normalizedEmail);
+  if (signup) return true;
+
+  if (usePg && pgPool) {
+    try {
+      const res = await pgPool.query(
+        'SELECT 1 FROM login WHERE LOWER(email) = $1 LIMIT 1',
+        [normalizedEmail]
+      );
+      if (res.rowCount > 0) return true;
+    } catch (err) {
+      console.warn('Payment account lookup error:', err.message);
+    }
+  }
+
+  const logins = readJson(loginPath, []);
+  return logins.some((row) => String(row.email || '').toLowerCase() === normalizedEmail);
+}
+
 async function findUserByEmail(email) {
   const normalizedEmail = email.trim().toLowerCase();
 
@@ -236,17 +290,18 @@ async function findUserByEmail(email) {
   return users.find((u) => u.email.toLowerCase() === normalizedEmail) || null;
 }
 
-async function createUser({ name, email, password }) {
+async function createUser({ name, email, password, mobile }) {
   const normalizedEmail = email.trim().toLowerCase();
+  const normalizedMobile = mobile ? String(mobile).replace(/\D/g, '').slice(0, 10) : null;
 
   if (usePg && pgPool) {
     try {
       const res = await pgPool.query(
-        'INSERT INTO signup (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-        [name.trim(), normalizedEmail, password]
+        'INSERT INTO signup (name, email, password, mobile) VALUES ($1, $2, $3, $4) RETURNING *',
+        [name.trim(), normalizedEmail, password, normalizedMobile]
       );
       const row = res.rows[0];
-      return { id: row.id, name: row.name, email: row.email };
+      return { id: row.id, name: row.name, email: row.email, mobile: row.mobile };
     } catch (err) {
       console.warn('PG insert error, fallback to JSON:', err.message);
     }
@@ -257,6 +312,7 @@ async function createUser({ name, email, password }) {
     id: Date.now().toString(),
     name: name.trim(),
     email: normalizedEmail,
+    mobile: normalizedMobile,
     password,
     otp: null,
     otpExpiresAt: null,
@@ -907,6 +963,213 @@ async function recordPayment(payment) {
   return entry;
 }
 
+const razorpayOrdersPath = path.join(dataDir, 'razorpay_orders.json');
+
+function readOrderRows() {
+  return readJson(razorpayOrdersPath, []);
+}
+
+function writeOrderRows(rows) {
+  writeJson(razorpayOrdersPath, rows);
+}
+
+async function saveRazorpayOrder(order) {
+  const entry = {
+    order_id: order.orderId,
+    receipt: order.receipt,
+    course_slug: order.courseSlug,
+    course_title: order.courseTitle,
+    student_name: order.studentName,
+    student_email: order.studentEmail || null,
+    account_email: order.accountEmail,
+    student_mobile: order.studentMobile,
+    student_state: order.studentState || null,
+    amount_rupees: order.amountRupees,
+    amount_paise: order.amountPaise,
+    currency: 'INR',
+    status: 'created',
+    razorpay_payment_id: null,
+    created_at: new Date().toISOString(),
+    paid_at: null,
+  };
+
+  if (usePg && pgPool) {
+    await pgPool.query(
+      `INSERT INTO razorpay_orders (
+        order_id, receipt, course_slug, course_title, student_name, student_email,
+        account_email, student_mobile, student_state, amount_rupees, amount_paise, currency, status
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+      [
+        entry.order_id,
+        entry.receipt,
+        entry.course_slug,
+        entry.course_title,
+        entry.student_name,
+        entry.student_email,
+        entry.account_email,
+        entry.student_mobile,
+        entry.student_state,
+        entry.amount_rupees,
+        entry.amount_paise,
+        entry.currency,
+        entry.status,
+      ]
+    );
+  }
+
+  const rows = readOrderRows();
+  rows.unshift(entry);
+  writeOrderRows(rows);
+  return entry;
+}
+
+async function getRazorpayOrder(orderId) {
+  if (usePg && pgPool) {
+    const res = await pgPool.query(
+      'SELECT * FROM razorpay_orders WHERE order_id = $1 LIMIT 1',
+      [orderId]
+    );
+    if (res.rows[0]) return res.rows[0];
+  }
+  return readOrderRows().find((row) => row.order_id === orderId) || null;
+}
+
+async function finalizeRazorpayPayment(order, payment) {
+  const entry = {
+    transaction_id: payment.paymentId,
+    course_slug: order.course_slug,
+    course_title: order.course_title,
+    student_name: order.student_name,
+    student_email: order.student_email,
+    account_email: order.account_email,
+    student_mobile: order.student_mobile,
+    amount: Number(order.amount_rupees),
+    currency: 'INR',
+    gateway: 'razorpay',
+    payment_method: payment.methodLabel,
+    payer_upi: payment.payerReference || null,
+    razorpay_order_id: order.order_id,
+    razorpay_signature: payment.signature,
+    status: 'SUCCESS',
+    created_at: new Date().toISOString(),
+  };
+
+  if (usePg && pgPool) {
+    const client = await pgPool.connect();
+    try {
+      await client.query('BEGIN');
+      const updated = await client.query(
+        `UPDATE razorpay_orders
+         SET status = 'paid', razorpay_payment_id = $2, paid_at = COALESCE(paid_at, NOW())
+         WHERE order_id = $1
+           AND (status = 'created' OR (status = 'paid' AND razorpay_payment_id = $2))
+         RETURNING order_id`,
+        [order.order_id, payment.paymentId]
+      );
+      if (updated.rowCount === 0) {
+        throw new Error('This order was already completed with a different payment.');
+      }
+      await client.query(
+        `INSERT INTO payments (
+          transaction_id, course_slug, course_title, student_name, student_email,
+          student_mobile, amount, gateway, payment_method, payer_upi, status,
+          razorpay_order_id, razorpay_signature, account_email, currency
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+        ON CONFLICT (transaction_id) DO NOTHING`,
+        [
+          entry.transaction_id,
+          entry.course_slug,
+          entry.course_title,
+          entry.student_name,
+          entry.student_email,
+          entry.student_mobile,
+          entry.amount,
+          entry.gateway,
+          entry.payment_method,
+          entry.payer_upi,
+          entry.status,
+          entry.razorpay_order_id,
+          entry.razorpay_signature,
+          entry.account_email,
+          entry.currency,
+        ]
+      );
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  const orders = readOrderRows();
+  const orderIndex = orders.findIndex((row) => row.order_id === order.order_id);
+  if (orderIndex >= 0) {
+    const current = orders[orderIndex];
+    if (current.status === 'paid' && current.razorpay_payment_id && current.razorpay_payment_id !== payment.paymentId) {
+      if (!(usePg && pgPool)) {
+        throw new Error('This order was already completed with a different payment.');
+      }
+    } else {
+      orders[orderIndex] = {
+        ...current,
+        status: 'paid',
+        razorpay_payment_id: payment.paymentId,
+        paid_at: current.paid_at || entry.created_at,
+      };
+      writeOrderRows(orders);
+    }
+  }
+
+  const filePath = path.join(dataDir, 'payments.json');
+  const rows = readJson(filePath, []);
+  if (!rows.some((row) => row.transaction_id === entry.transaction_id)) {
+    rows.unshift(entry);
+    writeJson(filePath, rows);
+  }
+  return entry;
+}
+
+async function findCoursePurchase({ courseSlug, email, mobile }) {
+  const slug = String(courseSlug || '').trim();
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  const normalizedMobile = String(mobile || '').replace(/\D/g, '').slice(-10);
+  if (!slug || (!normalizedEmail && normalizedMobile.length !== 10)) return null;
+
+  if (usePg && pgPool) {
+    const res = await pgPool.query(
+      `SELECT transaction_id
+       FROM payments
+       WHERE status = 'SUCCESS'
+         AND gateway = 'razorpay'
+         AND LOWER(course_slug) = LOWER($1)
+         AND (
+           ($2 <> '' AND LOWER(COALESCE(account_email, '')) = $2)
+           OR ($2 <> '' AND LOWER(COALESCE(student_email, '')) = $2)
+           OR ($3 <> '' AND student_mobile = $3)
+         )
+       ORDER BY created_at DESC
+       LIMIT 1`,
+      [slug, normalizedEmail, normalizedMobile.length === 10 ? normalizedMobile : '']
+    );
+    if (res.rows[0]) return res.rows[0];
+  }
+
+  const match = readJson(path.join(dataDir, 'payments.json'), []).find((row) => {
+    if (row.status !== 'SUCCESS' || row.gateway !== 'razorpay') return false;
+    if (String(row.course_slug || '').toLowerCase() !== slug.toLowerCase()) return false;
+    const account = String(row.account_email || '').toLowerCase();
+    const studentEmail = String(row.student_email || '').toLowerCase();
+    const studentMobile = String(row.student_mobile || '');
+    return (
+      (normalizedEmail && (account === normalizedEmail || studentEmail === normalizedEmail))
+      || (normalizedMobile.length === 10 && studentMobile === normalizedMobile)
+    );
+  });
+  return match || null;
+}
+
 async function listAcknowledgements() {
   if (usePg && pgPool) {
     const res = await pgPool.query(
@@ -957,6 +1220,7 @@ async function recordAcknowledgement(ack) {
 module.exports = {
   ready,
   findUserByEmail,
+  accountCanPay,
   createUser,
   updateUserOtp,
   updateUserPassword,
@@ -972,6 +1236,10 @@ module.exports = {
   listCourseRows,
   listPayments,
   recordPayment,
+  saveRazorpayOrder,
+  getRazorpayOrder,
+  finalizeRazorpayPayment,
+  findCoursePurchase,
   listAcknowledgements,
   recordAcknowledgement,
   paginate,

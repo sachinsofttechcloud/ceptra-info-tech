@@ -1,33 +1,41 @@
 const db = require('../lib/db');
 const { sendOtpEmail } = require('../lib/mail');
+const { isAdminEmail, isAllowedEmail, isValidMobile, passwordError } = require('../lib/validate');
 
 const OTP_TTL_MS = 5 * 60 * 1000;
-
-const SPECIAL_EMAILS = [
-  'chandan@ceptrainfotech.com',
-  'chandan.sakure@gmail.com',
-];
-
-function isSpecialEmail(email) {
-  if (!email) return false;
-  return SPECIAL_EMAILS.includes(email.trim().toLowerCase());
-}
 
 // Memory cache for OTPs (in addition to DB persistence)
 const otpStore = new Map();
 
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, mobile } = req.body;
+    const normalizedMobile = String(mobile || '').replace(/\D/g, '').slice(0, 10);
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !normalizedMobile) {
       return res.status(400).json({
         success: false,
-        message: 'Name, email, and password are required.',
+        message: 'Name, Gmail address, 10-digit mobile number, and password are required.',
       });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+    if (!isAllowedEmail(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Use a Gmail address like name@gmail.com.',
+      });
+    }
+    if (!isValidMobile(normalizedMobile)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Enter a 10-digit mobile number.',
+      });
+    }
+    const weakPassword = passwordError(password);
+    if (weakPassword) {
+      return res.status(400).json({ success: false, message: weakPassword });
+    }
 
     // Check if user already exists
     const existingUser = await db.findUserByEmail(normalizedEmail);
@@ -42,6 +50,7 @@ exports.signup = async (req, res) => {
       name: name.trim(),
       email: normalizedEmail,
       password: password,
+      mobile: normalizedMobile,
     });
 
     return res.status(201).json({
@@ -70,38 +79,25 @@ exports.login = async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-
-    // Requirement: chandan@ceptrainfotech.com and chandan.sakure@gmail.com direct access to course page
-    if (isSpecialEmail(normalizedEmail)) {
-      const specialUser = {
-        name: normalizedEmail.includes('chandan.sakure') ? 'Chandan Sakure' : 'Chandan Ceptra',
-        email: normalizedEmail,
-        isSpecial: true,
-      };
-      await db.recordLogin({
-        name: specialUser.name,
-        email: normalizedEmail,
-        password: password || null,
-      });
-      return res.status(200).json({
-        success: true,
-        message: 'Direct access granted for authorized email.',
-        user: specialUser,
+    if (!isAllowedEmail(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Use a Gmail address like name@gmail.com.',
       });
     }
 
-    if (!password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Password is required.',
-      });
+    const weakPassword = passwordError(password);
+    if (weakPassword) {
+      return res.status(400).json({ success: false, message: weakPassword });
     }
 
     const user = await db.findUserByEmail(normalizedEmail);
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'Email ID not found in database. Please sign up first.',
+        message: isAdminEmail(normalizedEmail)
+          ? 'This admin email does not have a password yet. Sign up with this email and a strong password.'
+          : 'Email ID not found in database. Please sign up first.',
       });
     }
 
@@ -149,12 +145,16 @@ exports.sendOtp = async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+    if (!isAllowedEmail(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Use a Gmail address like name@gmail.com.',
+      });
+    }
 
-    // Check if email is in special emails or DB
-    const isSpecial = isSpecialEmail(normalizedEmail);
     const user = await db.findUserByEmail(normalizedEmail);
 
-    if (!isSpecial && !user) {
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: 'This email ID is not present in our database.',
@@ -283,6 +283,16 @@ exports.resetPassword = async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
+    if (!isAllowedEmail(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Use a Gmail address like name@gmail.com.',
+      });
+    }
+    const weakPassword = passwordError(newPassword);
+    if (weakPassword) {
+      return res.status(400).json({ success: false, message: weakPassword });
+    }
 
     const updated = await db.updateUserPassword(normalizedEmail, newPassword);
     if (!updated) {

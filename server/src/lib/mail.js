@@ -39,4 +39,32 @@ async function sendOtpEmail({ email, name, otp }) {
   }
 }
 
-module.exports = { sendOtpEmail };
+async function sendNoticeEmail({ email, message }) {
+  const { serviceId, templateId, publicKey } = mailConfig();
+
+  const response = await fetch(EMAILJS_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      service_id: serviceId,
+      template_id: templateId,
+      user_id: publicKey,
+      template_params: {
+        to_email: email,
+        email,
+        to_name: message,
+        fullName: message,
+        otp: message,
+        message,
+        user_message: message,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const reason = await response.text();
+    throw new Error(reason || `Email provider returned ${response.status}`);
+  }
+}
+
+module.exports = { sendOtpEmail, sendNoticeEmail };

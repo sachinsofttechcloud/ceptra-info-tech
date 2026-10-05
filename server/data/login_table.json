@@ -47,5 +47,61 @@
     "email": "chandan@ceptrainfotech.com",
     "password": "sadfdsdf",
     "createdAt": "2026-09-23T10:59:51.520Z"
+  },
+  {
+    "id": 11,
+    "name": "ceptra",
+    "email": "ceptra@gmail.com",
+    "password": "12345678",
+    "createdAt": "2026-10-05T10:42:45.328Z"
+  },
+  {
+    "id": 12,
+    "name": "Chandan Ceptra",
+    "email": "chandan@ceptrainfotech.com",
+    "password": "chand@123",
+    "createdAt": "2026-10-05T10:44:11.833Z"
+  },
+  {
+    "id": 13,
+    "name": "tejas mahajan",
+    "email": "mteju7588@gmail.com",
+    "password": "#Tejas1234",
+    "createdAt": "2026-10-05T11:44:28.118Z"
+  },
+  {
+    "id": 14,
+    "name": "yash",
+    "email": "yp@mail.com",
+    "password": "88888888",
+    "createdAt": "2026-10-05T11:48:40.500Z"
+  },
+  {
+    "id": 15,
+    "name": "sachin",
+    "email": "sachin12@gmail.com",
+    "password": "12345678",
+    "createdAt": "2026-10-05T11:52:12.274Z"
+  },
+  {
+    "id": 16,
+    "name": "sachin m",
+    "email": "mohite@gmail.com",
+    "password": "12345678",
+    "createdAt": "2026-10-05T11:54:35.900Z"
+  },
+  {
+    "id": 17,
+    "name": "Chandan Ceptra",
+    "email": "chandan@ceptrainfotech.com",
+    "password": "3434343445",
+    "createdAt": "2026-10-05T12:04:13.974Z"
+  },
+  {
+    "id": 18,
+    "name": "chandan",
+    "email": "chandan.sakure@gmail.com",
+    "password": "Chandan@123#$",
+    "createdAt": "2026-10-05T13:11:22.220Z"
   }
 ]

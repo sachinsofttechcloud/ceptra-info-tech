@@ -103,5 +103,19 @@
     "email": "chandan.sakure@gmail.com",
     "password": "Chandan@123#$",
     "createdAt": "2026-10-05T13:11:22.220Z"
+  },
+  {
+    "id": 19,
+    "name": "chandan",
+    "email": "chandan.sakure@gmail.com",
+    "password": "Chandan@123#$",
+    "createdAt": "2026-10-06T11:53:13.915Z"
+  },
+  {
+    "id": 20,
+    "name": "sachin mohite",
+    "email": "sachinm@gmail.com",
+    "password": "Sachin@123#$",
+    "createdAt": "2026-10-06T12:02:43.737Z"
   }
 ]

@@ -1,10 +1,12 @@
 const { sendNoticeEmail } = require('./mail');
 
-function congratulationsText({ name, courseTitle, amount, paymentId }) {
+function congratulationsText({ name, courseTitle, amount, currency, paymentId }) {
   const student = name || 'Student';
   const course = courseTitle || 'your course';
-  const fee = Number(amount || 0).toLocaleString('en-IN');
-  return `Congratulations ${student}! Your payment of Rs ${fee} for ${course} is successful. Payment ID: ${paymentId}. Your course is unlocked at Ceptra Infotech.`;
+  const fee = currency === 'USD'
+    ? `$${Number(amount || 0).toLocaleString('en-US')}`
+    : `Rs ${Number(amount || 0).toLocaleString('en-IN')}`;
+  return `Congratulations ${student}! Your payment of ${fee} for ${course} is successful. Payment ID: ${paymentId}. Your course is unlocked at Ceptra Infotech.`;
 }
 
 async function sendSms(mobile, message) {

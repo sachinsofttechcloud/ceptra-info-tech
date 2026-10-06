@@ -33,11 +33,11 @@ function verifyCheckoutSignature({ orderId, paymentId, signature }) {
   return signaturesMatch(expected.toLowerCase(), String(signature || '').toLowerCase());
 }
 
-async function createOrder({ amountPaise, receipt, courseSlug }) {
+async function createOrder({ amountSubunits, currency, receipt, courseSlug }) {
   const client = getClient();
   return client.orders.create({
-    amount: amountPaise,
-    currency: 'INR',
+    amount: amountSubunits,
+    currency,
     receipt,
     notes: {
       course_slug: String(courseSlug || '').slice(0, 200),
@@ -50,9 +50,9 @@ async function fetchPayment(paymentId) {
   return client.payments.fetch(paymentId);
 }
 
-async function capturePayment(paymentId, amountPaise) {
+async function capturePayment(paymentId, amountSubunits, currency) {
   const client = getClient();
-  return client.payments.capture(paymentId, amountPaise, 'INR');
+  return client.payments.capture(paymentId, amountSubunits, currency);
 }
 
 module.exports = {

@@ -986,7 +986,7 @@ async function saveRazorpayOrder(order) {
     student_state: order.studentState || null,
     amount_rupees: order.amountRupees,
     amount_paise: order.amountPaise,
-    currency: 'INR',
+    currency: order.currency === 'USD' ? 'USD' : 'INR',
     status: 'created',
     razorpay_payment_id: null,
     created_at: new Date().toISOString(),
@@ -1043,8 +1043,10 @@ async function finalizeRazorpayPayment(order, payment) {
     student_email: order.student_email,
     account_email: order.account_email,
     student_mobile: order.student_mobile,
-    amount: Number(order.amount_rupees),
-    currency: 'INR',
+    amount: order.currency === 'USD'
+      ? Math.round(Number(order.amount_paise) / 100)
+      : Number(order.amount_rupees),
+    currency: order.currency === 'USD' ? 'USD' : 'INR',
     gateway: 'razorpay',
     payment_method: payment.methodLabel,
     payer_upi: payment.payerReference || null,

@@ -46,6 +46,28 @@ function payerReference(payment) {
   );
 }
 
+// Same ₹95 = $1 rate shown on the course cards.
+const USD_INR_RATE = 95;
+
+function chargeForCurrency(amountRupees, requested) {
+  const currency = String(requested || 'INR').toUpperCase();
+  if (currency === 'INR') {
+    return { currency: 'INR', subunits: amountRupees * 100, chargedMajor: amountRupees };
+  }
+  if (currency === 'USD') {
+    const dollars = Math.floor(amountRupees / USD_INR_RATE);
+    if (dollars < 1) {
+      const error = new Error('Dollar checkout starts at $1 (₹95). Pay in Indian rupees for this course.');
+      error.statusCode = 400;
+      throw error;
+    }
+    return { currency: 'USD', subunits: dollars * 100, chargedMajor: dollars };
+  }
+  const error = new Error('Choose Indian rupees or US dollars.');
+  error.statusCode = 400;
+  throw error;
+}
+
 exports.createOrder = async (req, res) => {
   try {
     if (!rateLimit(clientKey(req, 'create-order'), 8, 60 * 1000)) {
@@ -91,15 +113,16 @@ exports.createOrder = async (req, res) => {
       return sendError(res, 400, 'This course is not available for online payment.');
     }
 
-    const amountPaise = amountRupees * 100;
+    const charge = chargeForCurrency(amountRupees, req.body?.currency);
     const receipt = `rcp_${Date.now().toString(36)}_${crypto.randomBytes(4).toString('hex')}`.slice(0, 40);
     const order = await razorpay.createOrder({
-      amountPaise,
+      amountSubunits: charge.subunits,
+      currency: charge.currency,
       receipt,
       courseSlug: course.slug,
     });
 
-    if (!order?.id || Number(order.amount) !== amountPaise || order.currency !== 'INR') {
+    if (!order?.id || Number(order.amount) !== charge.subunits || order.currency !== charge.currency) {
       return sendError(res, 502, 'Razorpay did not return a valid order.');
     }
 
@@ -114,27 +137,32 @@ exports.createOrder = async (req, res) => {
       studentMobile: mobile,
       studentState: state,
       amountRupees,
-      amountPaise,
+      amountPaise: charge.subunits,
+      currency: charge.currency,
     });
 
     return res.status(201).json({
       success: true,
       keyId: razorpay.getCredentials().keyId,
       orderId: order.id,
-      amount: amountPaise,
-      currency: 'INR',
+      amount: charge.subunits,
+      currency: charge.currency,
+      chargedMajor: charge.chargedMajor,
+      amountRupees,
       courseTitle: course.title,
     });
   } catch (error) {
     const status = error.statusCode || error.status || 500;
-    console.error('Create Razorpay order error:', error?.error?.description || error.message);
-    return sendError(
-      res,
-      status >= 400 && status < 600 ? status : 500,
-      status === 503
-        ? 'Razorpay is not configured on the server.'
-        : 'Unable to start Razorpay checkout. Please try again.'
-    );
+    const description = cleanText(error?.error?.description, 180);
+    console.error('Create Razorpay order error:', description || error.message);
+    const message = status === 503
+      ? 'Razorpay is not configured on the server.'
+      : error.statusCode === 400
+        ? error.message
+        : /international|currency|not enabled|not supported/i.test(description)
+          ? `${description} Pay in Indian rupees, or enable international payments in the Razorpay dashboard.`
+          : 'Unable to start Razorpay checkout. Please try again.';
+    return sendError(res, status >= 400 && status < 600 ? status : 500, message);
   }
 };
 
@@ -177,15 +205,16 @@ exports.verifyPayment = async (req, res) => {
       return sendError(res, 400, 'Payment verification failed.');
     }
 
+    const currency = order.currency === 'USD' ? 'USD' : 'INR';
     let payment = await razorpay.fetchPayment(paymentId);
-    if (payment.order_id !== orderId || payment.currency !== 'INR') {
+    if (payment.order_id !== orderId || payment.currency !== currency) {
       return sendError(res, 400, 'Payment does not match this order.');
     }
     if (Number(payment.amount) !== Number(order.amount_paise)) {
       return sendError(res, 400, 'Paid amount does not match the course price.');
     }
     if (payment.status === 'authorized') {
-      payment = await razorpay.capturePayment(paymentId, Number(order.amount_paise));
+      payment = await razorpay.capturePayment(paymentId, Number(order.amount_paise), currency);
     }
     if (payment.status !== 'captured') {
       return sendError(res, 400, 'Payment is not completed yet.');
@@ -209,7 +238,10 @@ exports.verifyPayment = async (req, res) => {
         email: order.student_email || order.account_email,
         mobile: order.student_mobile,
         courseTitle: order.course_title,
-        amount: order.amount_rupees,
+        amount: currency === 'USD'
+          ? Math.round(Number(order.amount_paise) / 100)
+          : order.amount_rupees,
+        currency,
         paymentId: saved.transaction_id,
       });
     } catch (notifyError) {

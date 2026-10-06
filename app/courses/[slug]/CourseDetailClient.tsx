@@ -105,10 +105,36 @@ type RazorpayFailure = {
   error?: { description?: string };
 };
 
+type PayCurrency = "INR" | "USD";
+
 type RazorpayCheckout = {
   open: () => void;
   on: (event: "payment.failed", handler: (payload: RazorpayFailure) => void) => void;
 };
+
+const USD_INR_RATE = 95;
+
+function usdFromInr(rupees: number) {
+  return Math.floor(rupees / USD_INR_RATE);
+}
+
+function checkoutMethods(currency: string) {
+  if (currency !== "USD") return undefined;
+  // Rupee checkout must stay on Razorpay's own screens. A custom net banking
+  // block is shown as "Recommended" and the bank list never opens.
+  return {
+    display: {
+      blocks: {
+        cards: {
+          name: "International card",
+          instruments: [{ method: "card" }],
+        },
+      },
+      sequence: ["block.cards"],
+      preferences: { show_default_blocks: false },
+    },
+  };
+}
 
 declare global {
   interface Window {
@@ -121,6 +147,7 @@ declare global {
       order_id: string;
       prefill: { name?: string; email?: string; contact?: string };
       theme?: { color: string };
+      config?: ReturnType<typeof checkoutMethods>;
       handler: (response: RazorpaySuccess) => void;
       modal?: { ondismiss?: () => void };
     }) => RazorpayCheckout;
@@ -203,6 +230,7 @@ export default function CourseDetailClient({
 
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [payCurrency, setPayCurrency] = useState<PayCurrency>("INR");
   const [paymentNotice, setPaymentNotice] = useState<string | null>(null);
 
   const [form, setForm] = useState({
@@ -414,6 +442,7 @@ export default function CourseDetailClient({
           mobile: form.mobile.trim(),
           state: form.state,
           accountEmail: account.email,
+          currency: payCurrency,
         }),
       });
       const orderData = await orderResponse.json().catch(() => ({}));
@@ -422,6 +451,7 @@ export default function CourseDetailClient({
       }
 
       const RazorpayCheckout = window.Razorpay;
+      const methodConfig = checkoutMethods(orderData.currency || "INR");
       const checkout = new RazorpayCheckout({
         key: orderData.keyId,
         amount: orderData.amount,
@@ -435,6 +465,7 @@ export default function CourseDetailClient({
           contact: form.mobile.trim(),
         },
         theme: { color: ACCENT },
+        ...(methodConfig ? { config: methodConfig } : {}),
         handler: async (response) => {
           try {
             const verifyResponse = await fetch(`${API_URL}/api/payments/verify`, {
@@ -775,10 +806,15 @@ export default function CourseDetailClient({
               {course.title}
             </p>
 
-            <div className="mt-2 flex items-center gap-2">
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               <span className="text-lg font-extrabold" style={{ color: ACCENT }}>
                 ₹{course.price.toLocaleString("en-IN")}
               </span>
+              {usdFromInr(course.price) >= 1 && (
+                <span className="text-lg font-extrabold" style={{ color: ACCENT }}>
+                  ${usdFromInr(course.price).toLocaleString("en-US")}
+                </span>
+              )}
               {hasDiscount && (
                 <>
                   <span className="text-xs text-slate-400 line-through">
@@ -1128,13 +1164,57 @@ export default function CourseDetailClient({
                   </p>
                 </div>
 
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPayCurrency("INR");
+                      setPaymentError(null);
+                    }}
+                    className="rounded-lg border px-3 py-2 text-left text-xs font-semibold"
+                    style={{
+                      borderColor: payCurrency === "INR" ? ACCENT : "#e2e8f0",
+                      backgroundColor: payCurrency === "INR" ? "#f4f3ff" : "#fff",
+                      color: payCurrency === "INR" ? ACCENT : "#475569",
+                    }}
+                  >
+                    Indian rupee
+                    <span className="mt-1 block text-sm font-extrabold">
+                      ₹{course.price.toLocaleString("en-IN")}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={usdFromInr(course.price) < 1}
+                    onClick={() => {
+                      setPayCurrency("USD");
+                      setPaymentError(null);
+                    }}
+                    className="rounded-lg border px-3 py-2 text-left text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                    style={{
+                      borderColor: payCurrency === "USD" ? ACCENT : "#e2e8f0",
+                      backgroundColor: payCurrency === "USD" ? "#f4f3ff" : "#fff",
+                      color: payCurrency === "USD" ? ACCENT : "#475569",
+                    }}
+                  >
+                    US dollar
+                    <span className="mt-1 block text-sm font-extrabold">
+                      {usdFromInr(course.price) >= 1
+                        ? `$${usdFromInr(course.price).toLocaleString("en-US")}`
+                        : "Below $1"}
+                    </span>
+                  </button>
+                </div>
+
                 <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2">
                   <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
                     <Lock className="h-3 w-3 text-slate-400" />
                     Amount
                   </span>
                   <span className="text-base font-extrabold" style={{ color: ACCENT }}>
-                    ₹{course.price.toLocaleString("en-IN")}
+                    {payCurrency === "USD"
+                      ? `$${usdFromInr(course.price).toLocaleString("en-US")}`
+                      : `₹${course.price.toLocaleString("en-IN")}`}
                   </span>
                 </div>
 
@@ -1146,7 +1226,11 @@ export default function CourseDetailClient({
 
                 <button
                   type="button"
-                  disabled={isProcessingPayment || course.price < 1}
+                  disabled={
+                    isProcessingPayment
+                    || course.price < 1
+                    || (payCurrency === "USD" && usdFromInr(course.price) < 1)
+                  }
                   onClick={startRazorpayCheckout}
                   className="flex h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-bold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
                   style={{ backgroundColor: ACCENT }}
@@ -1159,11 +1243,18 @@ export default function CourseDetailClient({
                   ) : (
                     <>
                       <CreditCard className="h-4 w-4" />
-                      <span>Pay ₹{course.price.toLocaleString("en-IN")} with Razorpay</span>
+                      <span>
+                        {payCurrency === "USD"
+                          ? `Pay $${usdFromInr(course.price).toLocaleString("en-US")} with Razorpay`
+                          : `Pay ₹${course.price.toLocaleString("en-IN")} with Razorpay`}
+                      </span>
                     </>
                   )}
                 </button>
                 <p className="text-[11px] leading-relaxed text-slate-500">
+                  {payCurrency === "USD"
+                    ? "Dollar checkout uses an international card. UPI, net banking, and wallets are available when you pay in rupees. $1 equals ₹95, the same rate shown on the course card."
+                    : "Enter your mobile number in Razorpay and continue. Net banking is listed under Cards. Choose your bank there. Card details stay with Razorpay."}{" "}
                   The course unlocks only after our server verifies the Razorpay signature and saves the payment.
                 </p>
               </div>

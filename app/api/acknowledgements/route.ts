@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { API_URL } from "@/lib/admin";
 
+export const dynamic = "force-static";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

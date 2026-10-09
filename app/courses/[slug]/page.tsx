@@ -187,8 +187,8 @@ export async function generateStaticParams() {
         }
       }
     }
-  } catch (err) {
-    console.warn("generateStaticParams failed to fetch from backend API:", err);
+  } catch (_err) {
+    // Backend server is not running during build; fallback static course slugs are used
   }
 
   return [

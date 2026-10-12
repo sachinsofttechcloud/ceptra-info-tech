@@ -1,0 +1,223 @@
+{
+  "courses": [
+    {
+      "type": "new-courses",
+      "layout": "vertical",
+      "seeAllHref": null,
+      "heading": "New courses",
+      "data": [
+        {
+          "slug": "marketing-cloud-engagement-data-cloud-agentforce-marketing-cloud-next",
+          "title": "Marketing Cloud Engagement + Data Cloud + Agentforce + Marketing cloud Next",
+          "image": "/courses/new-course/1.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "TESTS"
+          ],
+          "price": 40000,
+          "originalPrice": 50000,
+          "href": "/courses/marketing-cloud-engagement-data-cloud-agentforce-marketing-cloud-next"
+        },
+        {
+          "slug": "marketing-cloud-engagement",
+          "title": "Marketing Cloud Engagement",
+          "image": "/courses/new-course/2.webp",
+          "tags": [
+            "FREE CONTENT",
+            "VIDEOS",
+            "FILES"
+          ],
+          "price": 32000,
+          "originalPrice": 40000,
+          "badge": "NEW COURSE",
+          "href": "/courses/marketing-cloud-engagement"
+        },
+        {
+          "slug": "data-cloud-agentforce-marketing-cloud-next",
+          "title": "Data Cloud + Agentforce + Marketing Cloud Next",
+          "image": "/courses/new-course/3.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "VIDEOS"
+          ],
+          "price": 32000,
+          "originalPrice": 40000,
+          "href": "/courses/data-cloud-agentforce-marketing-cloud-next"
+        },
+        {
+          "slug": "sfmc-next-live-class",
+          "title": "SFMC Next Live Class",
+          "image": "/courses/new-course/4.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "VIDEOS"
+          ],
+          "price": 22500,
+          "originalPrice": 30000,
+          "href": "/courses/sfmc-next-live-class"
+        },
+        {
+          "slug": "lwc",
+          "title": "LWC",
+          "image": "/courses/new-course/5.webp",
+          "tags": [
+            "VIDEOS",
+            "FILES"
+          ],
+          "price": 20000,
+          "originalPrice": 24500,
+          "href": "/courses/lwc"
+        }
+      ]
+    },
+    {
+      "type": "recent-courses",
+      "layout": "horizontal",
+      "seeAllHref": "/courses",
+      "heading": "Recent courses",
+      "data": [
+        {
+          "slug": "marketing-cloud-engagement-data-cloud-agentforce-marketing-cloud-next",
+          "title": "Marketing Cloud Engagement + Data Cloud + Agentforce + Marketing cloud Next",
+          "image": "/courses/new-course/1.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "TESTS"
+          ],
+          "price": 40000,
+          "originalPrice": 50000,
+          "href": "/courses/marketing-cloud-engagement-data-cloud-agentforce-marketing-cloud-next"
+        },
+        {
+          "slug": "marketing-cloud-engagement",
+          "title": "Marketing Cloud Engagement",
+          "image": "/courses/new-course/2.webp",
+          "tags": [
+            "FREE CONTENT",
+            "VIDEOS",
+            "FILES"
+          ],
+          "price": 32000,
+          "originalPrice": 40000,
+          "badge": "NEW COURSE",
+          "href": "/courses/marketing-cloud-engagement"
+        },
+        {
+          "slug": "data-cloud-agentforce-marketing-cloud-next",
+          "title": "Data Cloud + Agentforce + Marketing Cloud Next",
+          "image": "/courses/new-course/3.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "VIDEOS"
+          ],
+          "price": 32000,
+          "originalPrice": 40000,
+          "href": "/courses/data-cloud-agentforce-marketing-cloud-next"
+        },
+        {
+          "slug": "sfmc-next-live-class",
+          "title": "SFMC Next Live Class",
+          "image": "/courses/new-course/4.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "VIDEOS"
+          ],
+          "price": 22500,
+          "originalPrice": 30000,
+          "href": "/courses/sfmc-next-live-class"
+        },
+        {
+          "slug": "lwc",
+          "title": "LWC",
+          "image": "/courses/new-course/5.webp",
+          "tags": [
+            "VIDEOS",
+            "FILES"
+          ],
+          "price": 20000,
+          "originalPrice": 24500,
+          "href": "/courses/lwc"
+        }
+      ]
+    },
+    {
+      "type": "featured-courses",
+      "layout": "horizontal",
+      "seeAllHref": "/courses",
+      "heading": "Featured courses",
+      "data": [
+        {
+          "slug": "marketing-cloud-engagement-data-cloud-agentforce-marketing-cloud-next",
+          "title": "Marketing Cloud Engagement + Data Cloud + Agentforce + Marketing cloud Next",
+          "image": "/courses/new-course/1.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "TESTS"
+          ],
+          "price": 40000,
+          "originalPrice": 50000,
+          "href": "/courses/marketing-cloud-engagement-data-cloud-agentforce-marketing-cloud-next"
+        },
+        {
+          "slug": "marketing-cloud-engagement",
+          "title": "Marketing Cloud Engagement",
+          "image": "/courses/new-course/2.webp",
+          "tags": [
+            "FREE CONTENT",
+            "VIDEOS",
+            "FILES"
+          ],
+          "price": 32000,
+          "originalPrice": 40000,
+          "badge": "NEW COURSE",
+          "href": "/courses/marketing-cloud-engagement"
+        },
+        {
+          "slug": "data-cloud-agentforce-marketing-cloud-next",
+          "title": "Data Cloud + Agentforce + Marketing Cloud Next",
+          "image": "/courses/new-course/3.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "VIDEOS"
+          ],
+          "price": 32000,
+          "originalPrice": 40000,
+          "href": "/courses/data-cloud-agentforce-marketing-cloud-next"
+        },
+        {
+          "slug": "sfmc-next-live-class",
+          "title": "SFMC Next Live Class",
+          "image": "/courses/new-course/4.webp",
+          "tags": [
+            "LIVE CLASS",
+            "FREE CONTENT",
+            "VIDEOS"
+          ],
+          "price": 22500,
+          "originalPrice": 30000,
+          "href": "/courses/sfmc-next-live-class"
+        },
+        {
+          "slug": "lwc",
+          "title": "LWC",
+          "image": "/courses/new-course/5.webp",
+          "tags": [
+            "VIDEOS",
+            "FILES"
+          ],
+          "price": 20000,
+          "originalPrice": 24500,
+          "href": "/courses/lwc"
+        }
+      ]
+    }
+  ]
+}
